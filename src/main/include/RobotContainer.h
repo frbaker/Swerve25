@@ -49,8 +49,8 @@ class RobotContainer {
   Arm m_arm; 
   AprilTagData aprilTag;
   
-  photon::PhotonCamera camera{"photonvision"};
-
+  photon::PhotonCamera camera{"boom"};
+  bool isValueInArray(int value, int array[], int size);
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
 

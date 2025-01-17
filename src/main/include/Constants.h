@@ -59,15 +59,15 @@ namespace DriveConstants {
     constexpr int kPigeonIMU = 9;
 
     // SPARK MAX CAN IDs
-    constexpr int kFrontLeftDrivingCanId = 11;
-    constexpr int kRearLeftDrivingCanId = 13; //13;
-    constexpr int kFrontRightDrivingCanId = 15;
-    constexpr int kRearRightDrivingCanId = 17;
+    constexpr int kFrontLeftDrivingCanId = 16;
+    constexpr int kRearLeftDrivingCanId = 21; //13;
+    constexpr int kFrontRightDrivingCanId = 29;
+    constexpr int kRearRightDrivingCanId = 18;
 
-    constexpr int kFrontLeftTurningCanId = 10;
-    constexpr int kRearLeftTurningCanId = 12;
-    constexpr int kFrontRightTurningCanId = 14;
-    constexpr int kRearRightTurningCanId = 16;
+    constexpr int kFrontLeftTurningCanId = 14;
+    constexpr int kRearLeftTurningCanId = 17;
+    constexpr int kFrontRightTurningCanId = 13;
+    constexpr int kRearRightTurningCanId = 22;
 
     //needs to be adjusted per our robot
   const units::meter_t CAMERA_HEIGHT = 24_in;
@@ -76,7 +76,7 @@ namespace DriveConstants {
   const units::radian_t CAMERA_PITCH = 0_deg;
 
     //Each target may be at a different height
-  const units::meter_t TARGET_HEIGHT = 5_ft;
+  const units::meter_t TARGET_HEIGHT = 17_cm;
 
 }  // namespace DriveConstants
 
@@ -156,18 +156,18 @@ namespace OIConstants {
 }  // namespace OIConstants
 
 namespace IntakeConstants {
-    constexpr int kConveyorCanId = 7;
+    constexpr int kConveyorCanId = 62;
     constexpr double kIntakeSpeed = 0.3;
 }
 
 namespace ArmConstants {
- constexpr int kArmCanid = 1;
- constexpr int kArmCanid2 = 2; 
+ constexpr int kArmCanid = 61;
+ constexpr int kArmCanid2 = 60; 
  constexpr double kArmSpeed = 0.1; 
  constexpr int kArmDio = 0;
 }
 namespace PivotConstants {
- constexpr int kPivotCanid = 10; 
+ constexpr int kPivotCanid = 59; 
  constexpr double kPivotSpeed = 0.3; 
 
 }

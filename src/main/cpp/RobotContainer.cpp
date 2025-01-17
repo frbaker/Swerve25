@@ -26,26 +26,35 @@
 #include "utils/AprilTagData.h"
 #include <frc/DriverStation.h>
 
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+
+using namespace pathplanner;
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
-  // Initialize all of your commands and subsystems here
-  aprilTag.addAprilTagData(1, 122_cm, "source", "blue"); //on the right side of source
-  aprilTag.addAprilTagData(2, 122_cm, "source", "blue"); //on the left side of source
-  aprilTag.addAprilTagData(3, 132_cm, "speaker", "red"); //shifted 43_cm toward drivers station on speaker
-  aprilTag.addAprilTagData(4, 132_cm, "speaker", "red"); //vertically centered on speaker
-  aprilTag.addAprilTagData(5, 122_cm, "amp", "red");     //vertically centered on amp
-  aprilTag.addAprilTagData(6, 122_cm, "amp", "blue");    //vertically centered on amp
-  aprilTag.addAprilTagData(7, 132_cm, "speaker", "blue"); //vertically centered on speaker
-  aprilTag.addAprilTagData(8, 132_cm, "speaker", "blue"); //shifted 43_cm toward drivers station on speaker
-  aprilTag.addAprilTagData(9, 122_cm, "source", "red"); //on the right side of source
-  aprilTag.addAprilTagData(10, 122_cm, "source", "red"); //on the left side of source
-  aprilTag.addAprilTagData(11, 121_cm, "stage", "red");
-  aprilTag.addAprilTagData(12, 121_cm, "stage", "red");
-  aprilTag.addAprilTagData(13, 121_cm, "stage", "red");
-  aprilTag.addAprilTagData(14, 121_cm, "stage", "blue");
-  aprilTag.addAprilTagData(15, 121_cm, "stage", "blue");
-  aprilTag.addAprilTagData(16, 121_cm, "stage", "blue");
+  // Bottom of each tags height - note barge tags are angled down 30 degrees and aproximately centered on the middle cage
+  aprilTag.addAprilTagData(1, 135_cm, "CPU", "red"); //Coral pick up red left of drivers stations (13)
+  aprilTag.addAprilTagData(2, 135_cm, "CPU", "red"); //Coral pick up red right of drivers stations (12)
+  aprilTag.addAprilTagData(3, 117_cm, "processor", "red"); //Processor red alliance (16)
+  aprilTag.addAprilTagData(4, 178_cm, "barge", "red"); //blue end of Barge on the red alliance end of field (15)
+  aprilTag.addAprilTagData(5, 178_cm, "barge", "red"); //red end of barge on red alliance end of field (14)
+  aprilTag.addAprilTagData(6, 17_cm, "reef", "red"); //Reef left of center closer to drivers stations (19)
+  aprilTag.addAprilTagData(7, 17_cm, "reef", "red"); //Reef center closer to drivers stations (18)
+  aprilTag.addAprilTagData(8, 17_cm, "reef", "red"); //Reef right of center closer to drivers stations (17)
+  aprilTag.addAprilTagData(9, 17_cm, "reef", "red"); //Reef right of center closer to barge (as viewed from DS) (22)
+  aprilTag.addAprilTagData(10, 17_cm, "reef", "red"); //Reef center closer to Barge (21)
+  aprilTag.addAprilTagData(11, 17_cm, "reef", "red"); //Reef left of center closer to barge (as viewed from DS) (20)
+  aprilTag.addAprilTagData(12, 135_cm, "CPU", "blue"); //Coral pick up blue right of drivers stations (2)
+  aprilTag.addAprilTagData(13, 135_cm, "CPU", "blue"); //Coral pick up blue left of drivers stations (1)
+  aprilTag.addAprilTagData(14, 178_cm, "barge", "blue"); //blue end of barge on blue alliance end of field (5) 
+  aprilTag.addAprilTagData(15, 178_cm, "barge", "blue"); //red end of barge on blue alliance end of field (4)
+  aprilTag.addAprilTagData(16, 117_cm, "processor", "blue"); //Processor blue alliance (3)
+  aprilTag.addAprilTagData(17, 17_cm, "reef", "blue"); //Reef right of center closer to drivers stations (8)
+  aprilTag.addAprilTagData(18, 17_cm, "reef", "blue"); //Reef center closer to drivrs stations (7)
+  aprilTag.addAprilTagData(19, 17_cm, "reef", "blue"); //Reef left of center closer to drivers stations(6)
+  aprilTag.addAprilTagData(20, 17_cm, "reef", "blue"); //Reef left of center closer to barge (as viewed from DS) (11)
+  aprilTag.addAprilTagData(21, 17_cm, "reef", "blue"); //Reef center closer to barge (10)
+  aprilTag.addAprilTagData(22, 17_cm, "reef", "blue"); //Reef right of center closer to barge (as viewed from DS) (9)
 
 
 
@@ -68,7 +77,14 @@ RobotContainer::RobotContainer() {
       },
       {&m_drive}));
 }
-
+bool RobotContainer::isValueInArray(int value, int array[], int size) {
+    for (int i = 0; i < size; ++i) {
+        if (array[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
 void RobotContainer::ConfigureButtonBindings() {
   frc2::JoystickButton(&m_driverController,
                        frc::XboxController::Button::kRightBumper)
@@ -108,65 +124,85 @@ void RobotContainer::ConfigureButtonBindings() {
     frc2::JoystickButton(&m_coDriverController,
                        frc::XboxController::Button::kLeftBumper)
       .WhileTrue(new frc2::RunCommand([this] { 
+        frc::SmartDashboard::PutString("Running", "PhotonDrive");
         //get the camera target info 
 //const std::string alliance = frc::DriverStation::GetAlliance();
-    if (auto ally = frc::DriverStation::GetAlliance()) {
-        if (ally.value() == frc::DriverStation::Alliance::kRed) {
-            //we red
-            frc::SmartDashboard::PutString("Our Alliance", "RED");
+        if (auto ally = frc::DriverStation::GetAlliance()) {
+            if (ally.value() == frc::DriverStation::Alliance::kRed) {
+                //we red
+                frc::SmartDashboard::PutString("Our Alliance", "RED");
+            }
+            else if (ally.value() == frc::DriverStation::Alliance::kBlue) {
+                //we blue
+                frc::SmartDashboard::GetNumber("ChooseRoutine", 1);
+                frc::SmartDashboard::PutString("Our Alliance", "BLUE");
+            }
+            else {
+                frc::SmartDashboard::PutString("Our Alliance", "Unknown");
+            }
         }
-        if (ally.value() == frc::DriverStation::Alliance::kBlue) {
-            //we blue
-            frc::SmartDashboard::GetNumber("ChooseRoutine", 1);
-        }
-    }
      
 
 
-        photon::PhotonPipelineResult result = camera.GetLatestResult();
-        result.HasTargets() ? frc::SmartDashboard::PutString("has le target", "true"): frc::SmartDashboard::PutString("has le target", "false");
-
-        if (result.HasTargets()) {
-            double Yehaw = result.GetBestTarget().GetPitch();
-            int targetID = result.GetBestTarget().GetFiducialId();
-            frc::SmartDashboard::PutNumber("Yehaw", Yehaw);
-            frc::SmartDashboard::PutNumber("targetID", targetID);
+        std::vector<photon::PhotonPipelineResult> results = camera.GetAllUnreadResults();
+        if (!results.empty()) {
+            frc::SmartDashboard::PutString("Running", "PhotonDrive hasResults");
+            photon::PhotonPipelineResult result = results.back(); //back gets only the most recent
             
+        
+       
+            result.HasTargets() ? frc::SmartDashboard::PutString("has le target", "true"): frc::SmartDashboard::PutString("has le target", "false");
 
-            units::length::meter_t targetDataHeight = aprilTag.returnAprilTagDataHeight(targetID);
-            const std::string targetDataType = aprilTag.returnAprilTagDataTargetType(targetID);
-            const std::string redOrBlue = aprilTag.returnAprilTagDataTargetAlliance(targetID);
-            
 
-            
-
-            //Target has to match the alliance we are currently on ie red/blue
-            //If we are loaded we only care about speaker targets
-            //If we are NOT loaded we only care about source targets
-
-            if (targetID == 23) {
-
-                units::meter_t range = photon::PhotonUtils::CalculateDistanceToTarget(
-                CAMERA_HEIGHT, targetDataHeight, CAMERA_PITCH,
-                units::degree_t{result.GetBestTarget().GetPitch()});
-                m_drive.PhotonDrive(targetID, Yehaw, range); 
-                
-            }
-            
+            if (result.HasTargets()) {
+                frc::SmartDashboard::PutString("Running", "PhotonDrive HasTargets");
+                int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
+                for (auto target : result.GetTargets()) {
+                    double Yehaw = result.GetBestTarget().GetPitch();
+                    int targetID = result.GetBestTarget().GetFiducialId();
+                    bool found = std::any_of(std::begin(reefTags), std::end(reefTags), [targetID](int x) { return x == targetID; });
+                    if (found) {
+                        units::length::meter_t targetDataHeight = aprilTag.returnAprilTagDataHeight(targetID);
+                        const std::string targetDataType = aprilTag.returnAprilTagDataTargetType(targetID);
+                        const std::string redOrBlue = aprilTag.returnAprilTagDataTargetAlliance(targetID);
+                        units::degree_t yaw = units::degree_t(target.GetYaw());
+                        units::degree_t pitch = units::degree_t(target.GetPitch());
+                        units::meter_t range = photon::PhotonUtils::CalculateDistanceToTarget(
+                        CAMERA_HEIGHT, targetDataHeight, CAMERA_PITCH,
+                        units::degree_t{result.GetBestTarget().GetPitch()});
+                        units::meter_t targetDistance = units::meter_t(target.GetPoseAmbiguity() * range); // This might not be the actual calculation, adjust as needed
+                        
+                        //m_drive.PhotonDrive(targetID, Yehaw, range, yaw, targetDistance);
+                    }
+                    else {
+                        //If we don't care about this target - leave it in control of the driver
+                        m_drive.Drive(
+                        -units::meters_per_second_t{frc::ApplyDeadband(
+                            m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+                        -units::meters_per_second_t{frc::ApplyDeadband(
+                            m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+                        -units::radians_per_second_t{frc::ApplyDeadband(
+                            m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
+                        true, true);
+                    }
+                }
+            }  
             else {
-            //If we don't care about this target - leave it in controll of the driver
-            m_drive.Drive(
-            -units::meters_per_second_t{frc::ApplyDeadband(
-                m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
-            -units::meters_per_second_t{frc::ApplyDeadband(
-                m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
-            -units::radians_per_second_t{frc::ApplyDeadband(
-                m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            true, true);
+                frc::SmartDashboard::PutString("Running", "PhotonDrive No targtes");
+                //If we don't have any vision targets - leave it in controll of the driver
+                m_drive.Drive(
+                -units::meters_per_second_t{frc::ApplyDeadband(
+                    m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+                -units::meters_per_second_t{frc::ApplyDeadband(
+                    m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+                -units::radians_per_second_t{frc::ApplyDeadband(
+                    m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
+                true, true);
             }
         }
-        else {
-            //If we don't have any vision targets - leave it in controll of the driver
+         else {
+            
+             //If we don't have any vision targets - leave it in controll of the driver
             m_drive.Drive(
             -units::meters_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},

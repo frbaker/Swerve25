@@ -13,7 +13,16 @@
 #include "utils/SwerveUtils.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/config/RobotConfig.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+#include <frc/geometry/Pose2d.h>
+#include <frc/kinematics/ChassisSpeeds.h>
+#include <frc/DriverStation.h>
+
+using namespace pathplanner;
 using namespace DriveConstants;
+
 
 DriveSubsystem::DriveSubsystem()
     : m_frontLeft{kFrontLeftDrivingCanId, kFrontLeftTurningCanId,
@@ -27,8 +36,41 @@ DriveSubsystem::DriveSubsystem()
       m_odometry{kDriveKinematics,
                  frc::Rotation2d(units::radian_t{m_gyro.GetAngle()}),
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
-                  m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
-                 frc::Pose2d{}} {}
+                  m_rearLeft.GetPosition(), m_rearRight.GetPosition()}, 
+                 frc::Pose2d{}},
+                 m_alignPIDController(1.0, 0.0, 0.0), // Example values for Kp, Ki, Kd
+                 m_distancePIDController(1.0, 0.0, 0.0) 
+                 {
+
+                  // Configure the AutoBuilder last
+                 RobotConfig config = RobotConfig::fromGUISettings();
+
+                  // Configure the AutoBuilder last
+                  AutoBuilder::configure(
+                      [this](){ return GetPose(); }, // Robot pose supplier
+                      [this](frc::Pose2d pose){ resetPose(pose); }, // Method to reset odometry (will be called if your auto has a starting pose)
+                      [this](){ return getRobotRelativeSpeeds(); }, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                      [this](auto speeds, auto feedforwards){ driveRobotRelative(speeds); }, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+                      std::make_shared<PPHolonomicDriveController>( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                          PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                          PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                      ),
+                      config, // The robot configuration
+                      []() {
+                          // Boolean supplier that controls when the path will be mirrored for the red alliance
+                          // This will flip the path being followed to the red side of the field.
+                          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                          auto alliance = frc::DriverStation::GetAlliance();
+                          if (alliance) {
+                              return alliance.value() == frc::DriverStation::Alliance::kRed;
+                          }
+                          return false;
+                      },
+                      this // Reference to this subsystem to set requirements
+                  );
+                 }
+            
 
 void DriveSubsystem::Periodic() {
   //frc::SmartDashboard::PutNumber("Pigeon", m_gyro.GetAngle());
@@ -39,7 +81,7 @@ void DriveSubsystem::Periodic() {
 }
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
-                           units::meters_per_second_t ySpeed,
+                           units::meters_per_second_t ySpeed, //A
                            units::radians_per_second_t rot, bool fieldRelative,
                            bool rateLimit) {
   double xSpeedCommanded;
@@ -134,25 +176,35 @@ void DriveSubsystem::SetX() {
       frc::SwerveModuleState{0_mps, frc::Rotation2d{-45_deg}});
   m_rearRight.SetDesiredState(
       frc::SwerveModuleState{0_mps, frc::Rotation2d{45_deg}});
+  frc::SmartDashboard::PutString("Running", "SetX");
 }
 
-void DriveSubsystem::PhotonDrive(int targetId, double YeHaw, units::length::meter_t range) {
-frc::SmartDashboard::PutNumber("Target Acquired", targetId);
-frc::SmartDashboard::PutNumber("Target YeHaw", YeHaw);
+void DriveSubsystem::PhotonDrive(int targetId, double YeHaw, units::length::meter_t range, units::degree_t yaw, units::length::meter_t targetDistance) {
+  
+    frc::SmartDashboard::PutNumber("Target Acquired", targetId);
+    frc::SmartDashboard::PutNumber("Target YeHaw", YeHaw);
+    
+    units::length::inch_t rangeInInches = targetDistance;
+    frc::SmartDashboard::PutNumber("Target Range in Inches", rangeInInches.value());
+    frc::SmartDashboard::PutNumber("Target Range in Meters", targetDistance.value());
+                    // Calculate the alignment error (assuming target is centered when yaw and pitch are 0)
+                    
+                    // Apply PID control for alignment
+                    double turn = m_alignPIDController.Calculate(yaw.value(), 0.0);
+                    double forward = m_distancePIDController.Calculate(targetDistance.value(), 0.0);
+frc::SmartDashboard::PutNumber("Turn", turn);
+    frc::SmartDashboard::PutNumber("Forward", forward);
+    
+                    // Drive the robot with these corrections
+                    frc::ChassisSpeeds speeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                        units::meters_per_second_t(forward), 
+                        0_mps, 
+                        units::radians_per_second_t(turn),
+                        frc::Rotation2d(units::radian_t{m_gyro.GetAngle()})
+                    );
 
-units::length::inch_t rangeInInches = range;
-frc::SmartDashboard::PutNumber("Target Range in Inches", rangeInInches.value());
-frc::SmartDashboard::PutNumber("Target Range in Meters", range.value());
-
-
-//The .value() converts units from meter_t to it's underlying value of a double
-//https://docs.wpilib.org/en/stable/docs/software/basic-programming/cpp-units.html
-
-
-
-  //do like autonomous 
-  //set current position to 0
-  //then drive to where we should go
+                    Drive(speeds.vx, speeds.vy, speeds.omega, true, false); // Drive robot with new speeds
+                    return; // Exit once we've processed our target
 }
 
 void DriveSubsystem::SetModuleStates(
@@ -192,4 +244,36 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
       {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
        m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
       pose);
+      //A
+}
+void DriveSubsystem::resetPose(frc::Pose2d pose) {
+    // Reset the odometry to the given pose
+    m_odometry.ResetPosition(
+        frc::Rotation2d(units::radian_t{m_gyro.GetAngle()}),
+        {m_frontLeft.GetPosition(), m_frontRight.GetPosition(), m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
+        pose);
+}
+
+frc::ChassisSpeeds DriveSubsystem::getRobotRelativeSpeeds() {
+    // Assuming you can get the speed of each module, calculate robot-relative speeds
+    // This is an approximation; you'd need to know the current state of each module
+    auto flState = m_frontLeft.GetState();
+    auto frState = m_frontRight.GetState();
+    auto blState = m_rearLeft.GetState();
+    auto brState = m_rearRight.GetState();
+
+    // Convert module states to chassis speeds using kinematics, assuming robot relative
+    return kDriveKinematics.ToChassisSpeeds({flState, frState, blState, brState});
+}
+
+void DriveSubsystem::driveRobotRelative(frc::ChassisSpeeds speeds) {
+    // Convert chassis speeds to module states and set them
+    auto states = kDriveKinematics.ToSwerveModuleStates(speeds);
+    kDriveKinematics.DesaturateWheelSpeeds(&states, DriveConstants::kMaxSpeed);
+
+    // Set each module state
+    m_frontLeft.SetDesiredState(states[0]);
+    m_frontRight.SetDesiredState(states[1]);
+    m_rearLeft.SetDesiredState(states[2]);
+    m_rearRight.SetDesiredState(states[3]);
 }
