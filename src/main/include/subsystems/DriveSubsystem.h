@@ -13,7 +13,7 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc2/command/SubsystemBase.h>
-
+#include <frc/controller/PIDController.h>
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 
@@ -44,12 +44,16 @@ class DriveSubsystem : public frc2::SubsystemBase {
              units::meters_per_second_t ySpeed, units::radians_per_second_t rot,
              bool fieldRelative, bool rateLimit);
 
+  frc::Pose2d getPose();
+  void resetPose(frc::Pose2d pose);
+  frc::ChassisSpeeds getRobotRelativeSpeeds();
+  void driveRobotRelative(frc::ChassisSpeeds speeds);
   /**
    * Sets the wheels into an X formation to prevent movement.
    */
   void SetX();
 
-  void PhotonDrive(int targetId, double Yehaw, units::length::meter_t range);
+  void PhotonDrive(int targetId, double Yehaw, units::length::meter_t range, units::degree_t yaw, units::length::meter_t targetDistance);
 
   /**
    * Resets the drive encoders to currently read a position of 0.
@@ -135,4 +139,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   // Odometry class for tracking robot pose
   // 4 defines the number of modules
   frc::SwerveDriveOdometry<4> m_odometry;
+
+  frc::PIDController m_alignPIDController;
+  frc::PIDController m_distancePIDController;
+
 };
