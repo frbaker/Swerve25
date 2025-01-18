@@ -60,7 +60,7 @@ namespace DriveConstants {
 
     // SPARK MAX CAN IDs
     constexpr int kFrontLeftDrivingCanId = 16;
-    constexpr int kRearLeftDrivingCanId = 21; //13;
+    constexpr int kRearLeftDrivingCanId = 20; //13;
     constexpr int kFrontRightDrivingCanId = 29;
     constexpr int kRearRightDrivingCanId = 18;
 

@@ -58,6 +58,7 @@ RobotContainer::RobotContainer() {
 
 
 
+
   // Configure the button bindings
   ConfigureButtonBindings();
 
@@ -73,7 +74,7 @@ RobotContainer::RobotContainer() {
                 m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            true, true);
+            false,true);
       },
       {&m_drive}));
 }
@@ -127,7 +128,7 @@ void RobotContainer::ConfigureButtonBindings() {
         frc::SmartDashboard::PutString("Running", "PhotonDrive");
         //get the camera target info 
 //const std::string alliance = frc::DriverStation::GetAlliance();
-        if (auto ally = frc::DriverStation::GetAlliance()) {
+            auto ally = frc::DriverStation::GetAlliance();
             if (ally.value() == frc::DriverStation::Alliance::kRed) {
                 //we red
                 frc::SmartDashboard::PutString("Our Alliance", "RED");
@@ -140,7 +141,7 @@ void RobotContainer::ConfigureButtonBindings() {
             else {
                 frc::SmartDashboard::PutString("Our Alliance", "Unknown");
             }
-        }
+        
      
 
 
@@ -148,12 +149,7 @@ void RobotContainer::ConfigureButtonBindings() {
         if (!results.empty()) {
             frc::SmartDashboard::PutString("Running", "PhotonDrive hasResults");
             photon::PhotonPipelineResult result = results.back(); //back gets only the most recent
-            
-        
-       
             result.HasTargets() ? frc::SmartDashboard::PutString("has le target", "true"): frc::SmartDashboard::PutString("has le target", "false");
-
-
             if (result.HasTargets()) {
                 frc::SmartDashboard::PutString("Running", "PhotonDrive HasTargets");
                 int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
@@ -183,7 +179,7 @@ void RobotContainer::ConfigureButtonBindings() {
                             m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
                         -units::radians_per_second_t{frc::ApplyDeadband(
                             m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-                        true, true);
+                        false, true);
                     }
                 }
             }  
@@ -197,7 +193,7 @@ void RobotContainer::ConfigureButtonBindings() {
                     m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
                 -units::radians_per_second_t{frc::ApplyDeadband(
                     m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-                true, true);
+                false, true);
             }
         }
          else {
@@ -210,12 +206,13 @@ void RobotContainer::ConfigureButtonBindings() {
                 m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            true, true);
+            false, true);
         }
       }, {&m_drive}));
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {
+
   // Set up config for trajectory
   frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
                                AutoConstants::kMaxAcceleration);

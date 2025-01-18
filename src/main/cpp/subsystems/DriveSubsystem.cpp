@@ -202,8 +202,10 @@ frc::SmartDashboard::PutNumber("Turn", turn);
                         units::radians_per_second_t(turn),
                         frc::Rotation2d(units::radian_t{m_gyro.GetAngle()})
                     );
+                    /*Once data looks correct on the smart dashboard printouts - let it drive the robot */
+                    //Drive(speeds.vx, speeds.vy, speeds.omega, true, false); // Drive robot with new speeds
 
-                    Drive(speeds.vx, speeds.vy, speeds.omega, true, false); // Drive robot with new speeds
+                    
                     return; // Exit once we've processed our target
 }
 

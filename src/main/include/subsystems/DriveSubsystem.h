@@ -17,8 +17,9 @@
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 
-class DriveSubsystem : public frc2::SubsystemBase {
- public:
+class DriveSubsystem : public frc2::SubsystemBase
+{
+public:
   DriveSubsystem();
 
   /**
@@ -108,7 +109,7 @@ class DriveSubsystem : public frc2::SubsystemBase {
       frc::Translation2d{-DriveConstants::kWheelBase / 2,
                          -DriveConstants::kTrackWidth / 2}};
 
- private:
+private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
@@ -118,12 +119,8 @@ class DriveSubsystem : public frc2::SubsystemBase {
   MAXSwerveModule m_rearRight;
 
   // The gyro sensor
-  //frc::ADIS16470_IMU m_gyro;
-    ctre::phoenix6::hardware::Pigeon2 m_gyro{DriveConstants::kPigeonIMU};
-
-    /*
-    TODO: I added the beta release of the ctre vendor dependency - will have to update once they release the actual 2024 version
-    */
+  // frc::ADIS16470_IMU m_gyro;
+  ctre::phoenix6::hardware::Pigeon2 m_gyro{DriveConstants::kPigeonIMU};
 
   // Slew rate filter variables for controlling lateral acceleration
   double m_currentRotation = 0.0;
@@ -142,5 +139,4 @@ class DriveSubsystem : public frc2::SubsystemBase {
 
   frc::PIDController m_alignPIDController;
   frc::PIDController m_distancePIDController;
-
 };
