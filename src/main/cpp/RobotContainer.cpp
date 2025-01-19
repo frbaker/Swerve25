@@ -59,6 +59,7 @@ RobotContainer::RobotContainer() {
 
 
 
+
   // Configure the button bindings
   ConfigureButtonBindings();
 
@@ -74,7 +75,7 @@ RobotContainer::RobotContainer() {
                 m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            false,true);
+            true,true);
       },
       {&m_drive}));
 }
@@ -91,36 +92,11 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kX)
-      .WhileTrue(new frc2::RunCommand([this] { m_intake.RunIntake(); }, {&m_intake}));     
-
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kY)
-      .WhileTrue(new frc2::RunCommand([this] { m_intake.ReverseIntake(); }, {&m_intake}));  
-
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kLeftBumper)
-      .WhileTrue(new frc2::RunCommand([this] { m_intake.Stop(); }, {&m_intake}));      
-
-
-    frc2::JoystickButton(&m_driverController,
-                    frc::XboxController::Button::kA)
-    .OnTrue(new frc2::RunCommand([this] { 
-        m_arm.RunArm(); 
-    }, {&m_arm}))
-    .OnFalse(new frc2::RunCommand([this] { 
-        m_arm.Stop(); 
-    }, {&m_arm}));
-
-    frc2::JoystickButton(&m_driverController,
-                    frc::XboxController::Button::kB)
-    .WhileTrue(new frc2::RunCommand([this] { 
-          m_arm.Stop();
-        }, {&m_arm})); 
-
-
+        frc2::JoystickButton(&m_driverController,
+                         frc::XboxController::Button::kLeftBumper)
+        .WhileTrue(new frc2::RunCommand([this] {m_drive.ZeroHeading();}, {&m_drive}));
+//A
+//std::cout<<"AAAAAAAAAAAAAAAAAAAAAAAAAAA";
 //Second Controller
     frc2::JoystickButton(&m_coDriverController,
                        frc::XboxController::Button::kLeftBumper)
@@ -179,7 +155,7 @@ void RobotContainer::ConfigureButtonBindings() {
                             m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
                         -units::radians_per_second_t{frc::ApplyDeadband(
                             m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-                        false, true);
+                        true, true);
                     }
                 }
             }  
@@ -193,7 +169,7 @@ void RobotContainer::ConfigureButtonBindings() {
                     m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
                 -units::radians_per_second_t{frc::ApplyDeadband(
                     m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-                false, true);
+                true, true);
             }
         }
          else {
@@ -206,14 +182,16 @@ void RobotContainer::ConfigureButtonBindings() {
                 m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            false, true);
+            true, true);
         }
       }, {&m_drive}));
 }
 
-frc2::Command* RobotContainer::GetAutonomousCommand() {
 
-  // Set up config for trajectory
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+    frc::SmartDashboard::PutString("autonomous", "true");
+    return PathPlannerAuto("Center").ToPtr();
+  /*// Set up config for trajectory
   frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
                                AutoConstants::kMaxAcceleration);
   // Add kinematics to ensure max speed is actually obeyed
@@ -263,7 +241,7 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
       frc2::InstantCommand([this]() { m_drive.Drive(0_mps, 0_mps, 0_rad_per_s, false, false); },{}),
       frc2::RunCommand([this] { 
         m_arm.RunArm(); 
-    }, {&m_arm})
+    }, {&m_arm})/
         
   );
-}
+*/}

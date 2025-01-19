@@ -60,14 +60,14 @@ namespace DriveConstants {
 
     // SPARK MAX CAN IDs
     constexpr int kFrontLeftDrivingCanId = 16;
-    constexpr int kRearLeftDrivingCanId = 20; //13;
-    constexpr int kFrontRightDrivingCanId = 29;
-    constexpr int kRearRightDrivingCanId = 18;
+    constexpr int kRearLeftDrivingCanId = 17;
+    constexpr int kFrontRightDrivingCanId = 13;
+    constexpr int kRearRightDrivingCanId = 22;
 
     constexpr int kFrontLeftTurningCanId = 14;
-    constexpr int kRearLeftTurningCanId = 17;
-    constexpr int kFrontRightTurningCanId = 13;
-    constexpr int kRearRightTurningCanId = 22;
+    constexpr int kRearLeftTurningCanId = 20;
+    constexpr int kFrontRightTurningCanId = 29;
+    constexpr int kRearRightTurningCanId = 18;
 
     //needs to be adjusted per our robot
   const units::meter_t CAMERA_HEIGHT = 24_in;

@@ -34,7 +34,7 @@ DriveSubsystem::DriveSubsystem()
       m_rearRight{kRearRightDrivingCanId, kRearRightTurningCanId,
                   kRearRightChassisAngularOffset},
       m_odometry{kDriveKinematics,
-                 frc::Rotation2d(units::radian_t{m_gyro.GetAngle()}),
+                 frc::Rotation2d(units::radian_t{m_gyro.GetYaw().GetValue()}),
                  {m_frontLeft.GetPosition(), m_frontRight.GetPosition(),
                   m_rearLeft.GetPosition(), m_rearRight.GetPosition()}, 
                  frc::Pose2d{}},
@@ -73,9 +73,9 @@ DriveSubsystem::DriveSubsystem()
             
 
 void DriveSubsystem::Periodic() {
-  //frc::SmartDashboard::PutNumber("Pigeon", m_gyro.GetAngle());
+  //frc::SmartDashboard::PutNumber("Pigeon", m_gyro.GetYaw().GetValue());
   // Implementation of subsystem periodic method goes here.
-  m_odometry.Update(frc::Rotation2d(units::radian_t{m_gyro.GetAngle()}),
+  m_odometry.Update(frc::Rotation2d(units::radian_t{m_gyro.GetYaw().GetValue()}),
                     {m_frontLeft.GetPosition(), m_rearLeft.GetPosition(),
                      m_frontRight.GetPosition(), m_rearRight.GetPosition()});
 }
@@ -154,7 +154,7 @@ void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
       fieldRelative
           ? frc::ChassisSpeeds::FromFieldRelativeSpeeds(
                 xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                frc::Rotation2d(units::radian_t{m_gyro.GetAngle()}))
+                frc::Rotation2d(units::radian_t{m_gyro.GetYaw().GetValue()}))
           : frc::ChassisSpeeds{xSpeedDelivered, ySpeedDelivered, rotDelivered});
 
   kDriveKinematics.DesaturateWheelSpeeds(&states, DriveConstants::kMaxSpeed);
@@ -200,12 +200,12 @@ frc::SmartDashboard::PutNumber("Turn", turn);
                         units::meters_per_second_t(forward), 
                         0_mps, 
                         units::radians_per_second_t(turn),
-                        frc::Rotation2d(units::radian_t{m_gyro.GetAngle()})
+                        frc::Rotation2d(units::radian_t{m_gyro.GetYaw().GetValue()})
                     );
                     /*Once data looks correct on the smart dashboard printouts - let it drive the robot */
                     //Drive(speeds.vx, speeds.vy, speeds.omega, true, false); // Drive robot with new speeds
 
-                    
+
                     return; // Exit once we've processed our target
 }
 
@@ -226,16 +226,16 @@ void DriveSubsystem::ResetEncoders() {
   m_rearRight.ResetEncoders();
 }
 
-units::degree_t DriveSubsystem::GetHeading() const {
-  return frc::Rotation2d(units::radian_t{m_gyro.GetAngle()}).Degrees();
+units::degree_t DriveSubsystem::GetHeading() /*const*/ {
+  return frc::Rotation2d(units::radian_t{m_gyro.GetYaw().GetValue()}).Degrees();
 }
-
+//A
 void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
-
+//A
 double DriveSubsystem::GetTurnRate() { 
   //return -m_gyro.GetRate().value(); 
   return -m_gyro.GetRate(); 
-  
+  //A
   }
 
 frc::Pose2d DriveSubsystem::GetPose() { return m_odometry.GetPose(); }
@@ -251,7 +251,7 @@ void DriveSubsystem::ResetOdometry(frc::Pose2d pose) {
 void DriveSubsystem::resetPose(frc::Pose2d pose) {
     // Reset the odometry to the given pose
     m_odometry.ResetPosition(
-        frc::Rotation2d(units::radian_t{m_gyro.GetAngle()}),
+        frc::Rotation2d(units::radian_t{m_gyro.GetYaw().GetValue()}),
         {m_frontLeft.GetPosition(), m_frontRight.GetPosition(), m_rearLeft.GetPosition(), m_rearRight.GetPosition()},
         pose);
 }

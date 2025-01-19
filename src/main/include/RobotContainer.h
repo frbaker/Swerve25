@@ -34,7 +34,7 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::Command* GetAutonomousCommand();
+  frc2::CommandPtr GetAutonomousCommand();
 
  private:
   // The driver's controller
@@ -48,6 +48,7 @@ class RobotContainer {
   Intake m_intake;
   Arm m_arm; 
   AprilTagData aprilTag;
+
   
   photon::PhotonCamera camera{"boom"};
   bool isValueInArray(int value, int array[], int size);

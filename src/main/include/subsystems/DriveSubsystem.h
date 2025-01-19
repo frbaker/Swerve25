@@ -71,7 +71,7 @@ public:
    *
    * @return the robot's heading in degrees, from 180 to 180
    */
-  units::degree_t GetHeading() const;
+  units::degree_t GetHeading() /*const*/;
 
   /**
    * Zeroes the heading of the robot.
