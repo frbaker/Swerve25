@@ -58,6 +58,8 @@ RobotContainer::RobotContainer() {
 
 
 
+
+
   // Configure the button bindings
   ConfigureButtonBindings();
 
@@ -73,7 +75,7 @@ RobotContainer::RobotContainer() {
                 m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-            true, true);
+            true,true);
       },
       {&m_drive}));
 }
@@ -90,36 +92,11 @@ void RobotContainer::ConfigureButtonBindings() {
                        frc::XboxController::Button::kRightBumper)
       .WhileTrue(new frc2::RunCommand([this] { m_drive.SetX(); }, {&m_drive}));
 
-
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kX)
-      .WhileTrue(new frc2::RunCommand([this] { m_intake.RunIntake(); }, {&m_intake}));     
-
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kY)
-      .WhileTrue(new frc2::RunCommand([this] { m_intake.ReverseIntake(); }, {&m_intake}));  
-
-    frc2::JoystickButton(&m_driverController,
-                       frc::XboxController::Button::kLeftBumper)
-      .WhileTrue(new frc2::RunCommand([this] { m_intake.Stop(); }, {&m_intake}));      
-
-
-    frc2::JoystickButton(&m_driverController,
-                    frc::XboxController::Button::kA)
-    .OnTrue(new frc2::RunCommand([this] { 
-        m_arm.RunArm(); 
-    }, {&m_arm}))
-    .OnFalse(new frc2::RunCommand([this] { 
-        m_arm.Stop(); 
-    }, {&m_arm}));
-
-    frc2::JoystickButton(&m_driverController,
-                    frc::XboxController::Button::kB)
-    .WhileTrue(new frc2::RunCommand([this] { 
-          m_arm.Stop();
-        }, {&m_arm})); 
-
-
+        frc2::JoystickButton(&m_driverController,
+                         frc::XboxController::Button::kLeftBumper)
+        .WhileTrue(new frc2::RunCommand([this] {m_drive.ZeroHeading();}, {&m_drive}));
+//A
+//std::cout<<"AAAAAAAAAAAAAAAAAAAAAAAAAAA";
 //Second Controller
     frc2::JoystickButton(&m_coDriverController,
                        frc::XboxController::Button::kLeftBumper)
@@ -127,7 +104,7 @@ void RobotContainer::ConfigureButtonBindings() {
         frc::SmartDashboard::PutString("Running", "PhotonDrive");
         //get the camera target info 
 //const std::string alliance = frc::DriverStation::GetAlliance();
-        if (auto ally = frc::DriverStation::GetAlliance()) {
+            auto ally = frc::DriverStation::GetAlliance();
             if (ally.value() == frc::DriverStation::Alliance::kRed) {
                 //we red
                 frc::SmartDashboard::PutString("Our Alliance", "RED");
@@ -140,7 +117,7 @@ void RobotContainer::ConfigureButtonBindings() {
             else {
                 frc::SmartDashboard::PutString("Our Alliance", "Unknown");
             }
-        }
+        
      
 
 
@@ -148,12 +125,7 @@ void RobotContainer::ConfigureButtonBindings() {
         if (!results.empty()) {
             frc::SmartDashboard::PutString("Running", "PhotonDrive hasResults");
             photon::PhotonPipelineResult result = results.back(); //back gets only the most recent
-            
-        
-       
             result.HasTargets() ? frc::SmartDashboard::PutString("has le target", "true"): frc::SmartDashboard::PutString("has le target", "false");
-
-
             if (result.HasTargets()) {
                 frc::SmartDashboard::PutString("Running", "PhotonDrive HasTargets");
                 int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
@@ -215,8 +187,11 @@ void RobotContainer::ConfigureButtonBindings() {
       }, {&m_drive}));
 }
 
-frc2::Command* RobotContainer::GetAutonomousCommand() {
-  // Set up config for trajectory
+
+frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+    frc::SmartDashboard::PutString("autonomous", "true");
+    return PathPlannerAuto("Center").ToPtr();
+  /*// Set up config for trajectory
   frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
                                AutoConstants::kMaxAcceleration);
   // Add kinematics to ensure max speed is actually obeyed
@@ -266,7 +241,7 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
       frc2::InstantCommand([this]() { m_drive.Drive(0_mps, 0_mps, 0_rad_per_s, false, false); },{}),
       frc2::RunCommand([this] { 
         m_arm.RunArm(); 
-    }, {&m_arm})
+    }, {&m_arm})/
         
   );
-}
+*/}
