@@ -17,6 +17,7 @@
 #include "Constants.h"
 #include "MAXSwerveModule.h"
 
+
 class DriveSubsystem : public frc2::SubsystemBase
 {
 public:
@@ -55,6 +56,7 @@ public:
   void SetX();
 
   void PhotonDrive(int targetId, double Yehaw, units::length::meter_t range, units::degree_t yaw, units::length::meter_t targetDistance);
+  void PhotonDrive2(units::meters_per_second_t forward, units::meters_per_second_t strafe, units::degree_t yaw);
 
   /**
    * Resets the drive encoders to currently read a position of 0.
@@ -112,6 +114,7 @@ public:
 private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
+
 
   MAXSwerveModule m_frontLeft;
   MAXSwerveModule m_rearLeft;

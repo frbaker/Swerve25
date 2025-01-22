@@ -27,6 +27,7 @@
 #include <frc/DriverStation.h>
 
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
 
 using namespace pathplanner;
 using namespace DriveConstants;
@@ -57,8 +58,9 @@ RobotContainer::RobotContainer() {
   aprilTag.addAprilTagData(22, 17_cm, "reef", "blue"); //Reef right of center closer to barge (as viewed from DS) (9)
 
 
-
-
+    //NamedCommands::registerCommand("autoScore", std::move(m_drive.PhotonDrive2())); // <- This example method returns CommandPtr
+    //NamedCommands::registerCommand("autoScore", std::move(m_drive.PhotonDrive2()));
+    //NamedCommands::registerCommand("autoScore", std::move(PhotonDrive2Command(&m_drive)));
 
   // Configure the button bindings
   ConfigureButtonBindings();
@@ -98,53 +100,23 @@ void RobotContainer::ConfigureButtonBindings() {
 //A
 //std::cout<<"AAAAAAAAAAAAAAAAAAAAAAAAAAA";
 //Second Controller
-    frc2::JoystickButton(&m_coDriverController,
-                       frc::XboxController::Button::kLeftBumper)
+    frc2::JoystickButton(&m_driverController,
+                       frc::XboxController::Button::kB)
       .WhileTrue(new frc2::RunCommand([this] { 
-        frc::SmartDashboard::PutString("Running", "PhotonDrive");
-        //get the camera target info 
-//const std::string alliance = frc::DriverStation::GetAlliance();
-            auto ally = frc::DriverStation::GetAlliance();
-            if (ally.value() == frc::DriverStation::Alliance::kRed) {
-                //we red
-                frc::SmartDashboard::PutString("Our Alliance", "RED");
-            }
-            else if (ally.value() == frc::DriverStation::Alliance::kBlue) {
-                //we blue
-                frc::SmartDashboard::GetNumber("ChooseRoutine", 1);
-                frc::SmartDashboard::PutString("Our Alliance", "BLUE");
-            }
-            else {
-                frc::SmartDashboard::PutString("Our Alliance", "Unknown");
-            }
-        
-     
-
-
         std::vector<photon::PhotonPipelineResult> results = camera.GetAllUnreadResults();
         if (!results.empty()) {
-            frc::SmartDashboard::PutString("Running", "PhotonDrive hasResults");
             photon::PhotonPipelineResult result = results.back(); //back gets only the most recent
-            result.HasTargets() ? frc::SmartDashboard::PutString("has le target", "true"): frc::SmartDashboard::PutString("has le target", "false");
             if (result.HasTargets()) {
-                frc::SmartDashboard::PutString("Running", "PhotonDrive HasTargets");
                 int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
                 for (auto target : result.GetTargets()) {
                     double Yehaw = result.GetBestTarget().GetPitch();
                     int targetID = result.GetBestTarget().GetFiducialId();
                     bool found = std::any_of(std::begin(reefTags), std::end(reefTags), [targetID](int x) { return x == targetID; });
                     if (found) {
-                        units::length::meter_t targetDataHeight = aprilTag.returnAprilTagDataHeight(targetID);
-                        const std::string targetDataType = aprilTag.returnAprilTagDataTargetType(targetID);
-                        const std::string redOrBlue = aprilTag.returnAprilTagDataTargetAlliance(targetID);
-                        units::degree_t yaw = units::degree_t(target.GetYaw());
-                        units::degree_t pitch = units::degree_t(target.GetPitch());
-                        units::meter_t range = photon::PhotonUtils::CalculateDistanceToTarget(
-                        CAMERA_HEIGHT, targetDataHeight, CAMERA_PITCH,
-                        units::degree_t{result.GetBestTarget().GetPitch()});
-                        units::meter_t targetDistance = units::meter_t(target.GetPoseAmbiguity() * range); // This might not be the actual calculation, adjust as needed
-                        
-                        //m_drive.PhotonDrive(targetID, Yehaw, range, yaw, targetDistance);
+                        m_drive.PhotonDrive2(
+                            -units::meters_per_second_t{frc::ApplyDeadband(m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+                            -units::meters_per_second_t{frc::ApplyDeadband(m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+                            units::degree_t(target.GetYaw()));
                     }
                     else {
                         //If we don't care about this target - leave it in control of the driver
@@ -189,8 +161,7 @@ void RobotContainer::ConfigureButtonBindings() {
 
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    frc::SmartDashboard::PutString("autonomous", "true");
-    return PathPlannerAuto("Center").ToPtr();
+    return PathPlannerAuto("From Blue Cages").ToPtr();
   /*// Set up config for trajectory
   frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
                                AutoConstants::kMaxAcceleration);
