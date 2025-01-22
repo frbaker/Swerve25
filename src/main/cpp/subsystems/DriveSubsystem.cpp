@@ -179,6 +179,26 @@ void DriveSubsystem::SetX() {
   frc::SmartDashboard::PutString("Running", "SetX");
 }
 
+void DriveSubsystem::PhotonDrive2(units::meters_per_second_t forward, units::meters_per_second_t strafe, units::degree_t yaw){
+  double rotation = m_alignPIDController.Calculate(yaw.value(), 0.0);
+  units::radians_per_second_t rotationsPerSecond{rotation/75};
+  Drive(
+    forward,
+    strafe,
+    rotationsPerSecond,
+    true,
+    true
+  );
+  /*
+    units::meters_per_second_t xSpeed,
+    units::meters_per_second_t ySpeed, //A
+    units::radians_per_second_t rot, 
+    bool fieldRelative,
+    bool rateLimit
+  */
+}
+
+
 void DriveSubsystem::PhotonDrive(int targetId, double YeHaw, units::length::meter_t range, units::degree_t yaw, units::length::meter_t targetDistance) {
   
     frc::SmartDashboard::PutNumber("Target Acquired", targetId);
