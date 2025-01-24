@@ -18,6 +18,7 @@
 #include "MAXSwerveModule.h"
 
 
+
 class DriveSubsystem : public frc2::SubsystemBase
 {
 public:
@@ -55,8 +56,8 @@ public:
    */
   void SetX();
 
-  void PhotonDrive(int targetId, double Yehaw, units::length::meter_t range, units::degree_t yaw, units::length::meter_t targetDistance);
-  void PhotonDrive2(units::meters_per_second_t forward, units::meters_per_second_t strafe, units::degree_t yaw);
+  void PhotonDrive(units::meters_per_second_t forward, units::meters_per_second_t strafe, units::degree_t yaw);
+  void TractorBeam(units::meter_t forward, bool left, units::degree_t yaw);
 
   /**
    * Resets the drive encoders to currently read a position of 0.
@@ -80,12 +81,7 @@ public:
    */
   void ZeroHeading();
 
-  /**
-   * Returns the turn rate of the robot.
-   *
-   * @return The turn rate of the robot, in degrees per second
-   */
-  double GetTurnRate();
+  
 
   /**
    * Returns the currently-estimated pose of the robot.

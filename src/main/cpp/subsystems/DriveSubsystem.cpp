@@ -5,9 +5,12 @@
 #include "subsystems/DriveSubsystem.h"
 
 #include <frc/geometry/Rotation2d.h>
+
 #include <units/angle.h>
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
+#include <units/length.h>
+#include <units/angle.h>
 
 #include "Constants.h"
 #include "utils/SwerveUtils.h"
@@ -19,6 +22,8 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/DriverStation.h>
+#include <units/length.h>
+#include <cmath>
 
 using namespace pathplanner;
 using namespace DriveConstants;
@@ -82,8 +87,10 @@ void DriveSubsystem::Periodic() {
 
 void DriveSubsystem::Drive(units::meters_per_second_t xSpeed,
                            units::meters_per_second_t ySpeed, //A
-                           units::radians_per_second_t rot, bool fieldRelative,
-                           bool rateLimit) {
+                           units::radians_per_second_t rot,
+                           bool fieldRelative,
+                           bool rateLimit
+                           ) {
   double xSpeedCommanded;
   double ySpeedCommanded;
 
@@ -179,14 +186,43 @@ void DriveSubsystem::SetX() {
   frc::SmartDashboard::PutString("Running", "SetX");
 }
 
-void DriveSubsystem::PhotonDrive2(units::meters_per_second_t forward, units::meters_per_second_t strafe, units::degree_t yaw){
+void DriveSubsystem::TractorBeam(units::meter_t forward, bool left, units::degree_t yaw){
+  //Calculate how far forward to drive
+  double howFarDouble = forward.value();
+  double forwardPid = m_distancePIDController.Calculate(howFarDouble, 0.0); //adjust the second param to stop sooner or later
+  units::meters_per_second_t howFar{forwardPid/500}; //adjust the division to speed up or slow down after seeing robot behavior
+
+
+  //Calculate strafe and the offset (6 inches either side of center of the april tag?)
+  const units::meter_t DESIRED_OFFSET = 0.1524_m; // 6 inches (0.1524 meters) to the left or right of the april tag (adjust after seeing robot behavior)
+  units::radian_t desiredStrafeAngle = units::radian_t(atan2(DESIRED_OFFSET.value(), forward.value())); //right side of reef
+  if (left) {
+    units::radian_t desiredStrafeAngle = units::radian_t(atan2(-DESIRED_OFFSET.value(), forward.value())); //left side of reef
+  }
+  units::radian_t currentStrafeAngle = units::radian_t(atan2(0.0, forward.value())); // Assuming camera is centered; adjust if not
+  units::radian_t strafeAngleError = desiredStrafeAngle - currentStrafeAngle;
+  const double kp_strafe = 0.1; // Proportional gain for strafe, adjustments may be needed after seeing robot behavior
+  double strafeAdjustment = strafeAngleError.value() * kp_strafe;
+  units::meters_per_second_t strafeCommand = units::meters_per_second_t{strafeAdjustment};
+
+  //units::meters_per_second_t strafeCommand = 0.0_m; //If we are having trouble after seeing robot behavior - try this instead to eliminate variables
+
+  //Calculate rotation to be aligned to april tag
+  double rotation = m_alignPIDController.Calculate(yaw.value(), 0.0);
+  units::radians_per_second_t rotationsPerSecond{rotation/75};
+
+  //Tractorbeam to the april tag
+  Drive(howFar, strafeCommand, rotationsPerSecond, FIELD_RELATIVE, true); //Maybe taking off field relative would be a good idea after seeing robot behavior
+}
+
+void DriveSubsystem::PhotonDrive(units::meters_per_second_t forward, units::meters_per_second_t strafe, units::degree_t yaw){
   double rotation = m_alignPIDController.Calculate(yaw.value(), 0.0);
   units::radians_per_second_t rotationsPerSecond{rotation/75};
   Drive(
     forward,
     strafe,
     rotationsPerSecond,
-    true,
+    FIELD_RELATIVE,
     true
   );
   /*
@@ -196,37 +232,6 @@ void DriveSubsystem::PhotonDrive2(units::meters_per_second_t forward, units::met
     bool fieldRelative,
     bool rateLimit
   */
-}
-
-
-void DriveSubsystem::PhotonDrive(int targetId, double YeHaw, units::length::meter_t range, units::degree_t yaw, units::length::meter_t targetDistance) {
-  
-    frc::SmartDashboard::PutNumber("Target Acquired", targetId);
-    frc::SmartDashboard::PutNumber("Target YeHaw", YeHaw);
-    
-    units::length::inch_t rangeInInches = targetDistance;
-    frc::SmartDashboard::PutNumber("Target Range in Inches", rangeInInches.value());
-    frc::SmartDashboard::PutNumber("Target Range in Meters", targetDistance.value());
-                    // Calculate the alignment error (assuming target is centered when yaw and pitch are 0)
-                    
-                    // Apply PID control for alignment
-                    double turn = m_alignPIDController.Calculate(yaw.value(), 0.0);
-                    double forward = m_distancePIDController.Calculate(targetDistance.value(), 0.0);
-frc::SmartDashboard::PutNumber("Turn", turn);
-    frc::SmartDashboard::PutNumber("Forward", forward);
-    
-                    // Drive the robot with these corrections
-                    frc::ChassisSpeeds speeds = frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                        units::meters_per_second_t(forward), 
-                        0_mps, 
-                        units::radians_per_second_t(turn),
-                        frc::Rotation2d(units::radian_t{m_gyro.GetYaw().GetValue()})
-                    );
-                    /*Once data looks correct on the smart dashboard printouts - let it drive the robot */
-                    //Drive(speeds.vx, speeds.vy, speeds.omega, true, false); // Drive robot with new speeds
-
-
-                    return; // Exit once we've processed our target
 }
 
 void DriveSubsystem::SetModuleStates(
@@ -249,14 +254,8 @@ void DriveSubsystem::ResetEncoders() {
 units::degree_t DriveSubsystem::GetHeading() /*const*/ {
   return frc::Rotation2d(units::radian_t{m_gyro.GetYaw().GetValue()}).Degrees();
 }
-//A
+
 void DriveSubsystem::ZeroHeading() { m_gyro.Reset(); }
-//A
-double DriveSubsystem::GetTurnRate() { 
-  //return -m_gyro.GetRate().value(); 
-  return -m_gyro.GetRate(); 
-  //A
-  }
 
 frc::Pose2d DriveSubsystem::GetPose() { return m_odometry.GetPose(); }
 

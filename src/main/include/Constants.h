@@ -26,7 +26,7 @@ using namespace rev::spark;
 namespace DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    constexpr units::meters_per_second_t kMaxSpeed = 2_mps;
+    constexpr units::meters_per_second_t kMaxSpeed = 2.4_mps; //This is half speed right now
     //constexpr units::meters_per_second_t kMaxSpeed = 4.8_mps;
     constexpr units::radians_per_second_t kMaxAngularSpeed{2 * std::numbers::pi};
 
@@ -70,14 +70,15 @@ namespace DriveConstants {
     constexpr int kRearRightTurningCanId = 18;
 
     //needs to be adjusted per our robot
-  const units::meter_t CAMERA_HEIGHT = 24_in;
+  const units::meter_t CAMERA_HEIGHT = 0.17_m;
 
 // Angle between horizontal and the camera.
   const units::radian_t CAMERA_PITCH = 0_deg;
 
     //Each target may be at a different height
-  const units::meter_t TARGET_HEIGHT = 17_cm;
+  const units::meter_t TARGET_HEIGHT = 0.3351_m;
 
+  const bool FIELD_RELATIVE = true;
 }  // namespace DriveConstants
 
 
@@ -137,7 +138,7 @@ namespace ModuleConstants {
 Todo: ensure these values makes sense for our auto
 */
 namespace AutoConstants {
-    constexpr auto kMaxSpeed = 1_mps;
+    constexpr auto kMaxSpeed = 2.4_mps;
     constexpr auto kMaxAcceleration = 3_mps_sq;
     constexpr auto kMaxAngularSpeed = 3.142_rad_per_s;
     constexpr auto kMaxAngularAcceleration = 3.142_rad_per_s_sq;
@@ -171,7 +172,14 @@ namespace PivotConstants {
  constexpr double kPivotSpeed = 0.3; 
 
 }
-
+namespace ElevatorConstants {
+  constexpr int kElevatorCanId = 70;
+  constexpr double kTroughSetPoint = 5;
+  constexpr double kLevelTwoSetPoint = 10;
+  constexpr double kLevelThreeSetPoint = 15;
+  constexpr double kLevelFourSetPoint = 20;
+  
+}
 
 
 
