@@ -17,12 +17,12 @@
 #include <rev/SparkMax.h>
 #include <rev/SparkLowLevel.h>
 #include "Constants.h"
+#include <photon/PhotonCamera.h>
+#include "utils/AprilTagData.h"
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/Intake.h"
 #include "subsystems/Arm.h"
-#include <photon/PhotonCamera.h>
-#include "utils/AprilTagData.h"
-
+#include "subsystems/Elevator.h"
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -48,10 +48,12 @@ class RobotContainer {
   Intake m_intake;
   Arm m_arm; 
   AprilTagData aprilTag;
-
+  Elevator m_elevator;
   
   photon::PhotonCamera camera{"boom"};
   bool isValueInArray(int value, int array[], int size);
+  void DriverControl();
+  void ElevatorControl();
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
 
