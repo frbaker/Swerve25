@@ -57,7 +57,7 @@ public:
   void SetX();
 
   void PhotonDrive(units::meters_per_second_t forward, units::meters_per_second_t strafe, units::degree_t yaw);
-  void TractorBeam(units::meter_t forward, bool left, units::degree_t yaw);
+  void TractorBeam(units::meter_t forward, bool left, units::degree_t yaw, double targetArea);
 
   /**
    * Resets the drive encoders to currently read a position of 0.

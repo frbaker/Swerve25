@@ -186,15 +186,15 @@ void DriveSubsystem::SetX() {
   frc::SmartDashboard::PutString("Running", "SetX");
 }
 
-void DriveSubsystem::TractorBeam(units::meter_t forward, bool left, units::degree_t yaw){
+void DriveSubsystem::TractorBeam(units::meter_t forward, bool left, units::degree_t yaw, double targetArea){
   //Calculate how far forward to drive
   double howFarDouble = forward.value();
   double forwardPid = m_distancePIDController.Calculate(howFarDouble, 0.0); //adjust the second param to stop sooner or later
-  units::meters_per_second_t howFar{forwardPid/500}; //adjust the division to speed up or slow down after seeing robot behavior
-
+  //units::meters_per_second_t howFar{forwardPid/60}; //adjust the division to speed up or slow down after seeing robot behavior
+  units::meters_per_second_t howFar{0.3_mps}; //adjust the division to speed up or slow down after seeing robot behavior
 
   //Calculate strafe and the offset (6 inches either side of center of the april tag?)
-  const units::meter_t DESIRED_OFFSET = 0.1524_m; // 6 inches (0.1524 meters) to the left or right of the april tag (adjust after seeing robot behavior)
+  const units::meter_t DESIRED_OFFSET = 0.0_m; // 6 inches (0.1524 meters) to the left or right of the april tag (adjust after seeing robot behavior)
   units::radian_t desiredStrafeAngle = units::radian_t(atan2(DESIRED_OFFSET.value(), forward.value())); //right side of reef
   if (left) {
     units::radian_t desiredStrafeAngle = units::radian_t(atan2(-DESIRED_OFFSET.value(), forward.value())); //left side of reef
@@ -212,7 +212,13 @@ void DriveSubsystem::TractorBeam(units::meter_t forward, bool left, units::degre
   units::radians_per_second_t rotationsPerSecond{rotation/75};
 
   //Tractorbeam to the april tag
-  Drive(howFar, strafeCommand, rotationsPerSecond, FIELD_RELATIVE, true); //Maybe taking off field relative would be a good idea after seeing robot behavior
+  if (targetArea < 12){
+    frc::SmartDashboard::PutNumber("targetAreaAfterPass", targetArea);
+    Drive(howFar, strafeCommand, rotationsPerSecond, FIELD_RELATIVE, true); //Maybe taking off field relative would be a good idea after seeing robot behavior
+  }
+  else{
+    Drive(0_mps, 0_mps, 0_rad_per_s, FIELD_RELATIVE, true);
+  }
 }
 
 void DriveSubsystem::PhotonDrive(units::meters_per_second_t forward, units::meters_per_second_t strafe, units::degree_t yaw){
