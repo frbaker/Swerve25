@@ -212,7 +212,7 @@ void DriveSubsystem::TractorBeam(units::meter_t forward, bool left, units::degre
   units::radians_per_second_t rotationsPerSecond{rotation/75};
 
   //Tractorbeam to the april tag
-  if (targetArea < 12){
+  if (targetArea < 11.75){
     frc::SmartDashboard::PutNumber("targetAreaAfterPass", targetArea);
     Drive(howFar, strafeCommand, rotationsPerSecond, FIELD_RELATIVE, true); //Maybe taking off field relative would be a good idea after seeing robot behavior
   }
