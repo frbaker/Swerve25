@@ -70,13 +70,17 @@ namespace DriveConstants {
     constexpr int kRearRightTurningCanId = 18;
 
     //needs to be adjusted per our robot
-  const units::meter_t CAMERA_HEIGHT = 0.17_m;
+  const units::meter_t CAMERA_HEIGHT = 10.5_in;
 
 // Angle between horizontal and the camera.
   const units::radian_t CAMERA_PITCH = 0_deg;
 
     //Each target may be at a different height
-  const units::meter_t TARGET_HEIGHT = 0.3351_m;
+  const units::meter_t TARGET_HEIGHT = 12.0625_in; 
+  //const units::meter_t TARGET_HEIGHT = 15.375_in;
+  //bottom of april tag is 8.875_in (reef)
+  //top of april tag is 15.25_in (reef)
+  //center is 12.0625_in (reef)
 
   const bool FIELD_RELATIVE = true;
 }  // namespace DriveConstants
@@ -138,7 +142,7 @@ namespace ModuleConstants {
 Todo: ensure these values makes sense for our auto
 */
 namespace AutoConstants {
-    constexpr auto kMaxSpeed = 2.4_mps;
+    constexpr auto kMaxSpeed = 4.8_mps;
     constexpr auto kMaxAcceleration = 3_mps_sq;
     constexpr auto kMaxAngularSpeed = 3.142_rad_per_s;
     constexpr auto kMaxAngularAcceleration = 3.142_rad_per_s_sq;

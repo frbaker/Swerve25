@@ -127,8 +127,10 @@ void RobotContainer::ConfigureButtonBindings() {
                     int targetID = target.GetFiducialId();
                     bool found = std::any_of(std::begin(reefTags), std::end(reefTags), [targetID](int x) { return x == targetID; });
                     if (found) {
+                        double targetArea = target.GetArea();
+                        frc::SmartDashboard::PutNumber("tagetArea", targetArea);
                         units::meter_t distance = photon::PhotonUtils::CalculateDistanceToTarget(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_PITCH, units::radian_t{target.GetPitch()});
-                        m_drive.TractorBeam(distance, true, units::degree_t(target.GetYaw())); //true goes to the left
+                        m_drive.TractorBeam(distance, true, units::degree_t(target.GetYaw()), targetArea); //true goes to the left
                     }
                     else {
                        DriverControl();
@@ -155,11 +157,12 @@ void RobotContainer::ConfigureButtonBindings() {
                     int targetID = target.GetFiducialId();
                     bool found = std::any_of(std::begin(reefTags), std::end(reefTags), [targetID](int x) { return x == targetID; });
                     if (found) {
+                        double targetArea = target.GetArea();
                         //if the targeting region of target_height is set to top, this should be the height of the top of the target Thus, .17 meters plus 6.5 inches equals 0.3351 meters
                         //if this doesn't work, we can try the center of the target or the bottom of target
                         //Todo: adjust camera height based on actual measurement in constants.h, adjust target height to either top, center, or bottom?
                         units::meter_t distance = photon::PhotonUtils::CalculateDistanceToTarget(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_PITCH, units::radian_t{target.GetPitch()});
-                        m_drive.TractorBeam(distance, false, units::degree_t(target.GetYaw())); //false goes to the right
+                        m_drive.TractorBeam(distance, false, units::degree_t(target.GetYaw()), targetArea); //false goes to the right
                     }
                     else {
                        DriverControl();
