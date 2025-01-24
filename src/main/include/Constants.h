@@ -26,7 +26,7 @@ using namespace rev::spark;
 namespace DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    constexpr units::meters_per_second_t kMaxSpeed = 2.4_mps; //This is half speed right now
+    constexpr units::meters_per_second_t kMaxSpeed = 4.8_mps; //This is half speed right now
     //constexpr units::meters_per_second_t kMaxSpeed = 4.8_mps;
     constexpr units::radians_per_second_t kMaxAngularSpeed{2 * std::numbers::pi};
 
@@ -38,12 +38,9 @@ namespace DriveConstants {
     /*
     Todo: add TrackWidth and WheelBase measurements
     */
-   // constexpr units::meter_t kTrackWidth = 0.6731_m;  //24 5/8" Distance between centers of right and left wheels on robot
-    //constexpr units::meter_t kWheelBase = 0.6731_m;  // 28" Distance between centers of front and back wheels on robot
 
-
-    constexpr units::meter_t kTrackWidth = 0.6515_m;  //24 5/8" Distance between centers of right and left wheels on robot
-    constexpr units::meter_t kWheelBase = 0.7112_m;  // 28" Distance between centers of front and back wheels on robot
+    constexpr units::meter_t kWheelBase = 0.6515_m;  //28" Distance between centers of right and left wheels on robot
+    constexpr units::meter_t kTrackWidth = 0.7112_m;  // 24 5/8" Distance between centers of front and back wheels on robot
 
     // Angular offsets of the modules relative to the chassis in radians
     constexpr double kFrontLeftChassisAngularOffset = -std::numbers::pi / 2;
@@ -59,15 +56,15 @@ namespace DriveConstants {
     constexpr int kPigeonIMU = 9;
 
     // SPARK MAX CAN IDs
-    constexpr int kFrontLeftDrivingCanId = 16;
-    constexpr int kRearLeftDrivingCanId = 17;
-    constexpr int kFrontRightDrivingCanId = 13;
-    constexpr int kRearRightDrivingCanId = 22;
+    constexpr int kFrontLeftDrivingCanId = 17;
+    constexpr int kRearLeftDrivingCanId = 22;
+    constexpr int kFrontRightDrivingCanId = 16;
+    constexpr int kRearRightDrivingCanId = 13;
 
-    constexpr int kFrontLeftTurningCanId = 14;
-    constexpr int kRearLeftTurningCanId = 20;
-    constexpr int kFrontRightTurningCanId = 29;
-    constexpr int kRearRightTurningCanId = 18;
+    constexpr int kFrontLeftTurningCanId = 20;
+    constexpr int kRearLeftTurningCanId = 18;
+    constexpr int kFrontRightTurningCanId = 14;
+    constexpr int kRearRightTurningCanId = 29;
 
     //needs to be adjusted per our robot
   const units::meter_t CAMERA_HEIGHT = 10.5_in;
@@ -142,7 +139,7 @@ namespace ModuleConstants {
 Todo: ensure these values makes sense for our auto
 */
 namespace AutoConstants {
-    constexpr auto kMaxSpeed = 4.8_mps;
+    constexpr auto kMaxSpeed = 2_mps;
     constexpr auto kMaxAcceleration = 3_mps_sq;
     constexpr auto kMaxAngularSpeed = 3.142_rad_per_s;
     constexpr auto kMaxAngularAcceleration = 3.142_rad_per_s_sq;
