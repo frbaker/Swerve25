@@ -40,7 +40,7 @@ class RobotContainer {
   // The driver's controller
   frc::XboxController m_driverController{OIConstants::kDriverControllerPort};
   frc::XboxController m_coDriverController{OIConstants::kCoDriverControllerPort};
-
+                      
   // The robot's subsystems and commands are defined here...
 
   // The robot's subsystems
@@ -54,6 +54,7 @@ class RobotContainer {
   bool isValueInArray(int value, int array[], int size);
   void DriverControl();
   void ElevatorControl();
+  void coDriverControl();
   // The chooser for the autonomous routines
   frc::SendableChooser<frc2::Command*> m_chooser;
 

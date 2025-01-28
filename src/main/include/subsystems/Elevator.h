@@ -10,6 +10,7 @@
 #include <rev/SparkRelativeEncoder.h>
 #include <frc/controller/PIDController.h>
 #include "Constants.h"
+#include <rev/config/SparkMaxConfig.h>
 
 using namespace rev::spark;
 class Elevator : public frc2::SubsystemBase {
@@ -25,7 +26,10 @@ class Elevator : public frc2::SubsystemBase {
   frc2::CommandPtr GoToLevel2();
   frc2::CommandPtr GoToLevel3();
   frc2::CommandPtr GoToLevel4();
+  void SMaxTest();
   void Stop();
+  void PivotCoralCollector(double power);
+  double CurrentPosition();
   
   /**
    * An example method querying a boolean state of the subsystem (for example, a
@@ -50,6 +54,11 @@ class Elevator : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
   SparkMax m_elevatorMotor{ElevatorConstants::kElevatorCanId, SparkLowLevel::MotorType::kBrushless};
   SparkRelativeEncoder m_elevatorEncoder = m_elevatorMotor.GetEncoder();
+
+  SparkMax m_SMTEST1{ElevatorConstants::SMax_testone, SparkLowLevel::MotorType::kBrushless};
+  SparkMax m_SMTEST2{ElevatorConstants::SMax_testtwo, SparkLowLevel::MotorType::kBrushless};
+  SparkMax m_elevatorPivot{ElevatorConstants::kElevatorPivotCanId, SparkLowLevel::MotorType::kBrushless};
+ 
   //rev::SparkMax m_conveyorMotor(int deviceID, rev::SparkLowLevel::MotorType type);
   frc::PIDController m_setPointPIDController;
 

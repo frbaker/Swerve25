@@ -39,8 +39,8 @@ namespace DriveConstants {
     Todo: add TrackWidth and WheelBase measurements
     */
 
-    constexpr units::meter_t kWheelBase = 0.6515_m;  //28" Distance between centers of right and left wheels on robot
-    constexpr units::meter_t kTrackWidth = 0.7112_m;  // 24 5/8" Distance between centers of front and back wheels on robot
+    constexpr units::meter_t kTrackWidth = 0.6515_m;  //28" Distance between centers of right and left wheels on robot
+    constexpr units::meter_t kWheelBase = 0.7112_m;  // 24 5/8" Distance between centers of front and back wheels on robot
 
     // Angular offsets of the modules relative to the chassis in radians
     constexpr double kFrontLeftChassisAngularOffset = -std::numbers::pi / 2;
@@ -55,16 +55,17 @@ namespace DriveConstants {
     // Pigeon IMU
     constexpr int kPigeonIMU = 9;
 
-    // SPARK MAX CAN IDs
-    constexpr int kFrontLeftDrivingCanId = 17;
-    constexpr int kRearLeftDrivingCanId = 22;
-    constexpr int kFrontRightDrivingCanId = 16;
-    constexpr int kRearRightDrivingCanId = 13;
 
-    constexpr int kFrontLeftTurningCanId = 20;
-    constexpr int kRearLeftTurningCanId = 18;
-    constexpr int kFrontRightTurningCanId = 14;
-    constexpr int kRearRightTurningCanId = 29;
+    // SPARK MAX CAN IDs
+    constexpr int kFrontLeftDrivingCanId = 15;
+    constexpr int kRearLeftDrivingCanId = 27;
+    constexpr int kFrontRightDrivingCanId = 18;
+    constexpr int kRearRightDrivingCanId = 16;
+
+    constexpr int kFrontLeftTurningCanId = 28;
+    constexpr int kRearLeftTurningCanId = 20;
+    constexpr int kFrontRightTurningCanId = 29;
+    constexpr int kRearRightTurningCanId = 14;
 
     //needs to be adjusted per our robot
   const units::meter_t CAMERA_HEIGHT = 10.5_in;
@@ -81,7 +82,6 @@ namespace DriveConstants {
 
   const bool FIELD_RELATIVE = true;
 }  // namespace DriveConstants
-
 
 /*
 Todo: Update the module data based on actual build
@@ -174,14 +174,18 @@ namespace PivotConstants {
 
 }
 namespace ElevatorConstants {
-  constexpr int kElevatorCanId = 70;
+  constexpr int kElevatorCanId = 74;
   constexpr double kTroughSetPoint = 5;
   constexpr double kLevelTwoSetPoint = 10;
   constexpr double kLevelThreeSetPoint = 15;
   constexpr double kLevelFourSetPoint = 20;
-  
+  constexpr int SMax_testone = 23;
+  constexpr int SMax_testtwo = 17;
+  constexpr int kElevatorPivotCanId = 13;
 }
 
-
+//13 = elevator
+//17 = right coral collector
+//23 = left coral collector
 
 
