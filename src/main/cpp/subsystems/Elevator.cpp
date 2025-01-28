@@ -19,7 +19,15 @@ Todo: Will need to make methods that make sense for what the intake will do
 Elevator::Elevator():m_setPointPIDController(1.0, 0.0, 0.0) {
   // Implementation of subsystem constructor goes here.
   //frc::PWMSparkMax m_conveyorMotor(kconveyorMotorPort);
-  
+  SparkMaxConfig defaultConfig;
+  SparkMaxConfig smtest2Config;
+  smtest2Config.Apply(defaultConfig); //.Follow(m_SMTEST1);
+  smtest2Config.Inverted(true);
+
+  m_SMTEST1.Configure(defaultConfig, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kPersistParameters);
+  m_SMTEST2.Configure(smtest2Config, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kPersistParameters);
+
+
 }
 
 void Elevator::JoyControl(double goSpeed) {
@@ -70,8 +78,24 @@ frc2::CommandPtr Elevator::GoToLevel4() {
     });
 }
 
+void Elevator::SMaxTest(){
+   m_SMTEST1.Set(0.1);
+   m_SMTEST2.Set(0.1);
+}
+
 void Elevator::Stop(){
-  m_elevatorMotor.Set(0);
+   m_elevatorMotor.Set(0);
+  m_SMTEST1.Set(0.0);
+  m_SMTEST2.Set(0.0);
+  m_elevatorPivot.Set(0.0);
+}
+
+double Elevator::CurrentPosition(){
+  return m_elevatorEncoder.GetPosition();
+}
+
+void Elevator::PivotCoralCollector(double power){
+  m_elevatorPivot.Set(power);
 }
 
 void Elevator::Periodic() {

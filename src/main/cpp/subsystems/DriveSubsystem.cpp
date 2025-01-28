@@ -211,10 +211,10 @@ void DriveSubsystem::TractorBeam(units::meter_t forward, bool left, units::degre
   double rotation = m_alignPIDController.Calculate(yaw.value(), 0.0);
   units::radians_per_second_t rotationsPerSecond{rotation/75};
 
-  //Tractorbeam to the april tag
-  if (targetArea < 11.75){
+  //Tractorbeam to the april tag (changed from 11.70)
+  if (targetArea < 11.60){
     frc::SmartDashboard::PutNumber("targetAreaAfterPass", targetArea);
-    Drive(howFar, strafeCommand, rotationsPerSecond, FIELD_RELATIVE, true); //Maybe taking off field relative would be a good idea after seeing robot behavior
+    Drive(howFar, strafeCommand, rotationsPerSecond, false, true); //field relative needs to be false
   }
   else{
     Drive(0_mps, 0_mps, 0_rad_per_s, FIELD_RELATIVE, true);

@@ -57,7 +57,6 @@ RobotContainer::RobotContainer() {
   aprilTag.addAprilTagData(21, 17_cm, "reef", "blue"); //Reef center closer to barge (10)
   aprilTag.addAprilTagData(22, 17_cm, "reef", "blue"); //Reef right of center closer to barge (as viewed from DS) (9)
 
-
     //NamedCommands::registerCommand("autoScore", std::move(m_drive.PhotonDrive2())); // <- This example method returns CommandPtr
     //NamedCommands::registerCommand("autoScore", std::move(m_drive.PhotonDrive2()));
     //NamedCommands::registerCommand("autoScore", std::move(PhotonDrive2Command(&m_drive)));
@@ -84,17 +83,57 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ElevatorControl() {
     m_elevator.JoyControl(frc::ApplyDeadband( m_coDriverController.GetRightY(), OIConstants::kDriveDeadband));
 }
+//Y button lines up to L4
+//B button resets (lowers to floor, NOT trough)
+//X button is coral collector intake
+//A button is coral collector ejector
+
 
 void RobotContainer::DriverControl() {
-    m_drive.Drive(
-        -units::meters_per_second_t{frc::ApplyDeadband(
-            m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
-        -units::meters_per_second_t{frc::ApplyDeadband(
-            m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
-        -units::radians_per_second_t{frc::ApplyDeadband(
-            m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
-        FIELD_RELATIVE, true);
+    
+        if (m_elevator.CurrentPosition() > 10.00) {
+
+            if (m_driverController.GetPOV()==0) {
+                 m_drive.Drive(
+            -units::meters_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+            -units::meters_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+            -units::radians_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
+            FIELD_RELATIVE, true); 
+            } 
+            
+            else {
+                coDriverControl();
+             }
+        }
+        else {
+        m_drive.Drive(
+            -units::meters_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+            -units::meters_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+            -units::radians_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
+            FIELD_RELATIVE, true);
+        }
 }
+void RobotContainer::coDriverControl() {
+    m_drive.Drive(
+            -units::meters_per_second_t{(m_coDriverController.GetLeftY())/10},
+            -units::meters_per_second_t{(m_coDriverController.GetLeftTriggerAxis())/10 + (m_coDriverController.GetRightTriggerAxis())/10},
+            -units::radians_per_second_t{(m_coDriverController.GetRightX())/10},
+            FIELD_RELATIVE, true);
+    /*
+    m_drive.Drive(
+        -units::meters_per_second_t{m_coDriverController.GetLeftY()/10},
+        -units::meters_per_second_t{(m_coDriverController.GetLeftTriggerAxis()/10 + m_coDriverController.GetRightTriggerAxis())/10},
+        -units::meters_per_second_t{m_coDriverController.GetRightX()/10},
+        FIELD_RELATIVE, true);
+    */
+}
+
 
 bool RobotContainer::isValueInArray(int value, int array[], int size) {
     for (int i = 0; i < size; ++i) {
@@ -112,9 +151,9 @@ void RobotContainer::ConfigureButtonBindings() {
 */
 
     //Zero Heading
-    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kX).WhileTrue(new frc2::RunCommand([this] {
+/*    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kX).WhileTrue(new frc2::RunCommand([this] {
         m_drive.ZeroHeading();
-    }, {&m_drive}));
+    }, {&m_drive}));*/
 
     //Tractor Beam - left - experimental - robot rotates and drives to target automagically - with an offset of 6 inches to the left
     frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kLeftBumper).WhileTrue(new frc2::RunCommand([this] { 
@@ -212,8 +251,22 @@ void RobotContainer::ConfigureButtonBindings() {
     frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kX).WhileTrue(new frc2::RunCommand([this] {
         m_elevator.GoToLevel2();
     }, {&m_elevator}));
-}
 
+    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kY).WhileTrue(new frc2::RunCommand([this] {
+        m_elevator.SMaxTest();
+    }, {&m_elevator}));
+
+    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kB).WhileTrue(new frc2::RunCommand([this] {
+        m_elevator.Stop();
+    }, {&m_elevator}));
+
+    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kA).WhileTrue(new frc2::RunCommand([this] {
+        m_elevator.PivotCoralCollector(0.2);
+    }, {&m_elevator}));
+    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kX).WhileTrue(new frc2::RunCommand([this] {
+        m_elevator.PivotCoralCollector(-0.1);
+    }, {&m_elevator}));
+}
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
     return PathPlannerAuto("From Blue Cages").ToPtr();
