@@ -7,7 +7,7 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 #include <rev/SparkMax.h>
-#include <rev/SparkRelativeEncoder.h>
+#include <rev/SparkAbsoluteEncoder.h>
 #include <frc/controller/PIDController.h>
 #include "Constants.h"
 #include <rev/config/SparkMaxConfig.h>
@@ -26,7 +26,9 @@ class Elevator : public frc2::SubsystemBase {
   frc2::CommandPtr GoToLevel2();
   frc2::CommandPtr GoToLevel3();
   frc2::CommandPtr GoToLevel4();
-  void SMaxTest();
+  void UpAnotherLevel();
+  void DownAnotherLevel();
+
   void Stop();
   void PivotCoralCollector(double power);
   double CurrentPosition();
@@ -53,13 +55,10 @@ class Elevator : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
   SparkMax m_elevatorMotor{ElevatorConstants::kElevatorCanId, SparkLowLevel::MotorType::kBrushless};
-  SparkRelativeEncoder m_elevatorEncoder = m_elevatorMotor.GetEncoder();
+  SparkAbsoluteEncoder m_elevatorEncoder = m_elevatorMotor.GetAbsoluteEncoder();
 
-  SparkMax m_SMTEST1{ElevatorConstants::SMax_testone, SparkLowLevel::MotorType::kBrushless};
-  SparkMax m_SMTEST2{ElevatorConstants::SMax_testtwo, SparkLowLevel::MotorType::kBrushless};
   SparkMax m_elevatorPivot{ElevatorConstants::kElevatorPivotCanId, SparkLowLevel::MotorType::kBrushless};
  
-  //rev::SparkMax m_conveyorMotor(int deviceID, rev::SparkLowLevel::MotorType type);
   frc::PIDController m_setPointPIDController;
-
+  double sendElevatorTo = 0.0;
 };

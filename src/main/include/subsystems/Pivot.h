@@ -44,5 +44,5 @@ class Pivot : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
   SparkMax m_Pivot{PivotConstants::kPivotCanid, SparkLowLevel::MotorType::kBrushless};
-  //rev::SparkMax m_conveyorMotor(int deviceID, rev::SparkLowLevel::MotorType type);
+  
 };

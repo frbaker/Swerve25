@@ -49,5 +49,5 @@ class Arm : public frc2::SubsystemBase {
   SparkMax m_arm{ArmConstants::kArmCanid, SparkLowLevel::MotorType::kBrushless};
   SparkMax m_arm2{ArmConstants::kArmCanid2, SparkLowLevel::MotorType::kBrushless};
   frc::DigitalInput m_clicker{ArmConstants::kArmDio};
-  //rev::SparkMax m_conveyorMotor(int deviceID, rev::SparkLowLevel::MotorType type);
+  
 };
