@@ -10,83 +10,106 @@
 using namespace ElevatorConstants;
 
 /*
-Todo: will need to update the type of motor used on the intake once it's known
-Todo: Will need to make methods that make sense for what the intake will do
-- the intake is planned to be a conveyor so will need to turn one direction at a specific speed
-- I'm thinking it should be able to be reversed if we need to 
--it'd be nice to know if we have a note loaded 
+Tunning the PID loop
+Gradually increase P value until speed is not slugish, but doesn't overshoot or oscillate 
+After being happy with the P value, then adjust the I to increase precision if necessary (- if oscillations appear, decrease - do not be overly agressive with this. We may be fine leaving it at 0)
+When happy with P and I, can adjust the D value - it will SMOOTH out the motion, reduce overshooting - but it can amplify any noise (especially if there is occasinal out of normal sensor readings) and make it slugish if not tunned well.
 */
-Elevator::Elevator():m_setPointPIDController(1.0, 0.0, 0.0) {
+
+Elevator::Elevator():m_setPointPIDController(0.1, 0.0, 0.0) { //TODO - tune the pid loop
   // Implementation of subsystem constructor goes here.
-  //frc::PWMSparkMax m_conveyorMotor(kconveyorMotorPort);
-  SparkMaxConfig defaultConfig;
-  SparkMaxConfig smtest2Config;
-  smtest2Config.Apply(defaultConfig); //.Follow(m_SMTEST1);
-  smtest2Config.Inverted(true);
-
-  m_SMTEST1.Configure(defaultConfig, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kPersistParameters);
-  m_SMTEST2.Configure(smtest2Config, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kPersistParameters);
-
-
+  
 }
 
 void Elevator::JoyControl(double goSpeed) {
-      m_elevatorMotor.Set(goSpeed);
-      double currentPosition = m_elevatorEncoder.GetPosition();
-      frc::SmartDashboard::PutNumber("Elevator Encoder Reading", currentPosition); 
+  double currentPosition = m_elevatorEncoder.GetPosition();
+  frc::SmartDashboard::PutNumber("Elevator Encoder Reading", currentPosition); 
+  if (goSpeed > 0) {
+    //going up if we are not above maxHeight
+    if (currentPosition < kElevatorMaxHeight) {
+     m_elevatorMotor.Set(goSpeed);
+    }
+    if (currentPosition >= kLevelThreeSetPoint){
+      sendElevatorTo = kLevelFourSetPoint;
+    }
+    else if (currentPosition >= kLevelTwoSetPoint){
+      sendElevatorTo = kLevelThreeSetPoint;
+    }
+    else if (currentPosition >= kTroughSetPoint){
+      sendElevatorTo = kLevelTwoSetPoint;
+    }
+    else if (currentPosition >= 0.0) {
+      sendElevatorTo = kTroughSetPoint;
+    }
+  }
+  else{
+    //doing down if we are not below MinHeight
+    if (currentPosition > kElevatorMinHeight) {
+     m_elevatorMotor.Set(goSpeed);
+    }
+    if (currentPosition <= kTroughSetPoint){
+      sendElevatorTo = 0.0;
+    }
+    else if (currentPosition <= kLevelTwoSetPoint){
+      sendElevatorTo = kTroughSetPoint;
+    }
+    else if (currentPosition <= kLevelThreeSetPoint){
+      sendElevatorTo = kLevelTwoSetPoint;
+    }
+    else if (currentPosition <= kLevelFourSetPoint) {
+      sendElevatorTo = kLevelThreeSetPoint;
+    }
+  }
 }
 
-frc2::CommandPtr Elevator::GoToBottom() {
-  return RunOnce([ this ] {
-    double currentPosition = m_elevatorEncoder.GetPosition();
-    double setPointAdjustment = m_setPointPIDController.Calculate(currentPosition, 0.0);
+void Elevator::UpAnotherLevel(){
+  if (sendElevatorTo == 0.0) {
+    sendElevatorTo = kTroughSetPoint;
+  }
+  else if (sendElevatorTo == kTroughSetPoint){
+    sendElevatorTo = kLevelTwoSetPoint;
+  }
+  else if (sendElevatorTo == kLevelTwoSetPoint){
+    sendElevatorTo = kLevelThreeSetPoint;
+  }
+  else if (sendElevatorTo == kLevelThreeSetPoint){
+    sendElevatorTo = kLevelFourSetPoint;
+  }
+  double currentPosition = m_elevatorEncoder.GetPosition();
+  if (std::abs(currentPosition - sendElevatorTo) <= kElevatorTolerance){ //this works like a deadband so if we are close it doesn't keep running motors
+    m_elevatorMotor.Set(0.0); 
+  }
+  else{
+    double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-1.0, 1.0);
     m_elevatorMotor.Set(setPointAdjustment);
-    frc::SmartDashboard::PutString("Elevator","Going to bottom");
-  });
+  }
 }
 
-frc2::CommandPtr Elevator::GoToTrough() {
-  return RunOnce([ this ] { 
-      double currentPosition = m_elevatorEncoder.GetPosition();
-      double setPointAdjustment = m_setPointPIDController.Calculate(currentPosition, kTroughSetPoint);
-      m_elevatorMotor.Set(setPointAdjustment);
-      frc::SmartDashboard::PutString("Elevator","Going to trough");
-    });
-}
-frc2::CommandPtr Elevator::GoToLevel2() {
-  return RunOnce([ this ] { 
-      double currentPosition = m_elevatorEncoder.GetPosition();
-      double setPointAdjustment = m_setPointPIDController.Calculate(currentPosition, kLevelTwoSetPoint);
-      m_elevatorMotor.Set(setPointAdjustment);
-      frc::SmartDashboard::PutString("Elevator","Going to Level2");
-    });
-}
-frc2::CommandPtr Elevator::GoToLevel3() {
-  return RunOnce([ this ] { 
-      double currentPosition = m_elevatorEncoder.GetPosition();
-      double setPointAdjustment = m_setPointPIDController.Calculate(currentPosition, kLevelThreeSetPoint);
-      m_elevatorMotor.Set(setPointAdjustment);
-      frc::SmartDashboard::PutString("Elevator","Going to Level 3");
-    });
-}
-frc2::CommandPtr Elevator::GoToLevel4() {
-  return RunOnce([ this ] { 
-      double currentPosition = m_elevatorEncoder.GetPosition();
-      double setPointAdjustment = m_setPointPIDController.Calculate(currentPosition, kLevelFourSetPoint);
-      m_elevatorMotor.Set(setPointAdjustment);
-      frc::SmartDashboard::PutString("Elevator","Going to Level 4");
-    });
-}
-
-void Elevator::SMaxTest(){
-   m_SMTEST1.Set(0.1);
-   m_SMTEST2.Set(0.1);
+void Elevator::DownAnotherLevel(){
+  if (sendElevatorTo == kLevelFourSetPoint) {
+    sendElevatorTo = kLevelThreeSetPoint;
+  }
+  else if (sendElevatorTo == kLevelThreeSetPoint){
+    sendElevatorTo = kLevelTwoSetPoint;
+  }
+  else if (sendElevatorTo == kLevelTwoSetPoint){
+    sendElevatorTo = kTroughSetPoint;
+  }
+  else if (sendElevatorTo == kTroughSetPoint){
+    sendElevatorTo = 0.0;
+  }
+  double currentPosition = m_elevatorEncoder.GetPosition();
+  if (std::abs(currentPosition - sendElevatorTo) <= kElevatorTolerance){ //this works like a deadband so if we are close it doesn't keep running motors
+    m_elevatorMotor.Set(0.0); 
+  }
+  else{
+    double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-1.0, 1.0);
+    m_elevatorMotor.Set(setPointAdjustment);
+  }
 }
 
 void Elevator::Stop(){
    m_elevatorMotor.Set(0);
-  m_SMTEST1.Set(0.0);
-  m_SMTEST2.Set(0.0);
   m_elevatorPivot.Set(0.0);
 }
 

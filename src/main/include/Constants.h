@@ -81,6 +81,9 @@ namespace DriveConstants {
   //center is 12.0625_in (reef)
 
   const bool FIELD_RELATIVE = true;
+
+  constexpr double kElevatorForceDriveToCoDriverHeight = 20; //TODO Need to decide and add height that codriver gets control
+
 }  // namespace DriveConstants
 
 /*
@@ -157,9 +160,10 @@ namespace OIConstants {
     constexpr double kDriveDeadband = 0.10;
 }  // namespace OIConstants
 
-namespace IntakeConstants {
-    constexpr int kConveyorCanId = 62;
-    constexpr double kIntakeSpeed = 0.3;
+namespace CoralCollectorContants {
+  constexpr int kCoralCollectorLeftCanId = 23;
+  constexpr int kCoralCollectorRightCanId = 17;
+  constexpr double kCoralCollectorSpeed = 0.2;
 }
 
 namespace ArmConstants {
@@ -175,16 +179,21 @@ namespace PivotConstants {
 }
 namespace ElevatorConstants {
   constexpr int kElevatorCanId = 74;
-  constexpr double kTroughSetPoint = 5;
-  constexpr double kLevelTwoSetPoint = 10;
-  constexpr double kLevelThreeSetPoint = 15;
-  constexpr double kLevelFourSetPoint = 20;
-  constexpr int SMax_testone = 23;
-  constexpr int SMax_testtwo = 17;
-  constexpr int kElevatorPivotCanId = 13;
-}
 
-//13 = elevator
+  constexpr int kElevatorPivotCanId = 13;
+
+  constexpr int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
+  constexpr double kElevatorMinHeight = 0;    
+  constexpr double kElevatorMaxHeight = 25;      //todo - needs to be measured and set
+  constexpr double kTroughSetPoint = 5;          //todo - needs to be measured and set
+  constexpr double kLevelTwoSetPoint = 10;       //todo - needs to be measured and set
+  constexpr double kLevelThreeSetPoint = 15;     //todo - needs to be measured and set
+  constexpr double kLevelFourSetPoint = 20;      //todo - needs to be measured and set
+  constexpr double kPickUpSetPoint = 15;         //todo - needs to be measured and set
+  constexpr double kElevatorTolerance = 0.05;    //todo - may need to be adjusted
+  constexpr double kElevatorToCloseToReef = 100.0; //todo - determine when the area occupied by an april tag means we are TOO close to the reef and raising or lowering the elevator would damage the bot.
+  }
+
 //17 = right coral collector
 //23 = left coral collector
 

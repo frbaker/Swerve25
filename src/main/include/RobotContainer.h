@@ -18,9 +18,8 @@
 #include <rev/SparkLowLevel.h>
 #include "Constants.h"
 #include <photon/PhotonCamera.h>
-#include "utils/AprilTagData.h"
 #include "subsystems/DriveSubsystem.h"
-#include "subsystems/Intake.h"
+#include "subsystems/CoralCollector.h"
 #include "subsystems/Arm.h"
 #include "subsystems/Elevator.h"
 /**
@@ -45,18 +44,21 @@ class RobotContainer {
 
   // The robot's subsystems
   DriveSubsystem m_drive;
-  Intake m_intake;
+  CoralCollector m_collector;
   Arm m_arm; 
-  AprilTagData aprilTag;
   Elevator m_elevator;
-  
+  frc::SendableChooser<frc2::Command*> m_chooser;
+
   photon::PhotonCamera camera{"boom"};
   bool isValueInArray(int value, int array[], int size);
   void DriverControl();
   void ElevatorControl();
   void coDriverControl();
+  photon::PhotonTrackedTarget hasValidAprilTagTarget();
   // The chooser for the autonomous routines
-  frc::SendableChooser<frc2::Command*> m_chooser;
+  
 
   void ConfigureButtonBindings();
+  double elevatorOverrideHeight;
+  bool fieldRelative;
 };
