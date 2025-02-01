@@ -30,7 +30,6 @@ class Elevator : public frc2::SubsystemBase {
   void DownAnotherLevel();
 
   void Stop();
-  void PivotCoralCollector(double power);
   double CurrentPosition();
   
   /**
@@ -57,7 +56,7 @@ class Elevator : public frc2::SubsystemBase {
   SparkMax m_elevatorMotor{ElevatorConstants::kElevatorCanId, SparkLowLevel::MotorType::kBrushless};
   SparkAbsoluteEncoder m_elevatorEncoder = m_elevatorMotor.GetAbsoluteEncoder();
 
-  SparkMax m_elevatorPivot{ElevatorConstants::kElevatorPivotCanId, SparkLowLevel::MotorType::kBrushless};
+  //SparkMax m_elevatorPivot{ElevatorConstants::kElevatorPivotCanId, SparkLowLevel::MotorType::kBrushless};
  
   frc::PIDController m_setPointPIDController;
   double sendElevatorTo = 0.0;

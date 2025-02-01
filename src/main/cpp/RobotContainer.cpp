@@ -236,13 +236,17 @@ void RobotContainer::ConfigureButtonBindings() {
     //TODO -- implement RunCoralCollector, and ReverseCoralCollector from the coralCollector class
     //TODO -- create the Pivot class (or use the arm for the pivot class to pivot the coral collector]
 
-    /*frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kY).WhileTrue(new frc2::RunCommand([this] {
-        m_elevator.PivotCoralCollector(0.2);
-    }, {&m_elevator}));
+    frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kY).WhileTrue(new frc2::RunCommand([this] {
+        m_pivot.RunPivot();
+    }, {&m_pivot})).OnFalse(new frc2::InstantCommand([this] {
+        m_pivot.Stop();
+    }, {&m_pivot}));;
 
     frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kB).WhileTrue(new frc2::RunCommand([this] {
-        m_elevator.PivotCoralCollector(-0.1);
-    }, {&m_elevator}));*/
+        m_pivot.ReversePivot();
+    }, {&m_pivot})).OnFalse(new frc2::InstantCommand([this] {
+        m_pivot.Stop();
+    }, {&m_pivot}));
 
 
 

@@ -17,9 +17,9 @@ class Pivot : public frc2::SubsystemBase {
   /**
    * Example command factory method.
    */
-  frc2::CommandPtr RunPivot();
-  frc2::CommandPtr ReversePivot();
-  frc2::CommandPtr Stop();
+  void RunPivot();
+  void ReversePivot();
+  void Stop();
   
   /**
    * An example method querying a boolean state of the subsystem (for example, a

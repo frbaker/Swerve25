@@ -22,6 +22,7 @@
 #include "subsystems/CoralCollector.h"
 #include "subsystems/Arm.h"
 #include "subsystems/Elevator.h"
+#include "subsystems/Pivot.h"
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -45,7 +46,7 @@ class RobotContainer {
   // The robot's subsystems
   DriveSubsystem m_drive;
   CoralCollector m_collector;
-  Arm m_arm; 
+  Pivot m_pivot;
   Elevator m_elevator;
   frc::SendableChooser<frc2::Command*> m_chooser;
 

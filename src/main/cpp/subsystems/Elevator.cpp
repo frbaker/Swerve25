@@ -110,16 +110,12 @@ void Elevator::DownAnotherLevel(){
 
 void Elevator::Stop(){
    m_elevatorMotor.Set(0);
-  m_elevatorPivot.Set(0.0);
 }
 
 double Elevator::CurrentPosition(){
   return m_elevatorEncoder.GetPosition();
 }
 
-void Elevator::PivotCoralCollector(double power){
-  m_elevatorPivot.Set(0.0);
-}
 
 void Elevator::Periodic() {
   // Implementation of subsystem periodic method goes here.
