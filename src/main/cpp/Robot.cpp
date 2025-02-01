@@ -7,6 +7,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 
+
 void Robot::RobotInit() {frc::SmartDashboard::PutNumber("ChooseRoutine", 1);}
 
 /**
@@ -24,7 +25,9 @@ void Robot::RobotPeriodic() {frc2::CommandScheduler::GetInstance().Run(); }
  * can use it to reset any subsystem information you want to clear when the
  * robot is disabled.
  */
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+  
+}
 
 void Robot::DisabledPeriodic() {}
 

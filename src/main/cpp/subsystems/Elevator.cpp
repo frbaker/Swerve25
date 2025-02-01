@@ -118,7 +118,7 @@ double Elevator::CurrentPosition(){
 }
 
 void Elevator::PivotCoralCollector(double power){
-  m_elevatorPivot.Set(power);
+  m_elevatorPivot.Set(0.0);
 }
 
 void Elevator::Periodic() {

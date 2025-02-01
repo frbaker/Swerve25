@@ -62,7 +62,7 @@ namespace DriveConstants {
     constexpr int kFrontRightDrivingCanId = 18;
     constexpr int kRearRightDrivingCanId = 16;
 
-    constexpr int kFrontLeftTurningCanId = 28;
+    constexpr int kFrontLeftTurningCanId = 28;  
     constexpr int kRearLeftTurningCanId = 20;
     constexpr int kFrontRightTurningCanId = 29;
     constexpr int kRearRightTurningCanId = 14;
@@ -161,8 +161,8 @@ namespace OIConstants {
 }  // namespace OIConstants
 
 namespace CoralCollectorContants {
-  constexpr int kCoralCollectorLeftCanId = 23;
-  constexpr int kCoralCollectorRightCanId = 17;
+  constexpr int kCoralCollectorLeftCanId = 17;
+  constexpr int kCoralCollectorRightCanId = 13;
   constexpr double kCoralCollectorSpeed = 0.2;
 }
 
@@ -173,14 +173,14 @@ namespace ArmConstants {
  constexpr int kArmDio = 0;
 }
 namespace PivotConstants {
- constexpr int kPivotCanid = 59; 
+ constexpr int kPivotCanid = 71; // should be 23
  constexpr double kPivotSpeed = 0.3; 
 
 }
 namespace ElevatorConstants {
   constexpr int kElevatorCanId = 74;
 
-  constexpr int kElevatorPivotCanId = 13;
+  constexpr int kElevatorPivotCanId = 23;
 
   constexpr int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
   constexpr double kElevatorMinHeight = 0;    

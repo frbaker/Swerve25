@@ -70,18 +70,18 @@ void RobotContainer::DriverControl() {
             if (m_driverController.GetPOV()==0) {
                 elevatorOverrideHeight = std::numeric_limits<double>::max(); //will give control back to driver
                  m_drive.Drive(
-                    -units::meters_per_second_t{frc::ApplyDeadband(
-                        m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
-                    -units::meters_per_second_t{frc::ApplyDeadband(
-                        m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
-                    -units::radians_per_second_t{frc::ApplyDeadband(
-                        m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
+            -units::meters_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+            -units::meters_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+            -units::radians_per_second_t{frc::ApplyDeadband(
+                m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
                     fieldRelative, true
                 );
             } 
             else if (m_driverController.GetPOV()==180) {
                 elevatorOverrideHeight = kElevatorForceDriveToCoDriverHeight;
-            }
+            } 
             else {
                 coDriverControl();
              }
@@ -126,7 +126,7 @@ photon::PhotonTrackedTarget RobotContainer::hasValidAprilTagTarget() {
     // If no valid target found, return an empty PhotonTrackedTarget
     return photon::PhotonTrackedTarget();
 }
-    
+
 
 bool RobotContainer::isValueInArray(int value, int array[], int size) {
     for (int i = 0; i < size; ++i) {
@@ -158,14 +158,14 @@ void RobotContainer::ConfigureButtonBindings() {
         elevatorOverrideHeight = kElevatorForceDriveToCoDriverHeight;
         photon::PhotonTrackedTarget target = hasValidAprilTagTarget();
         if (target.GetFiducialId() > 0) {
-            double targetArea = target.GetArea();
-            frc::SmartDashboard::PutNumber("tagetArea", targetArea);
-            units::meter_t distance = photon::PhotonUtils::CalculateDistanceToTarget(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_PITCH, units::radian_t{target.GetPitch()});
-            m_drive.TractorBeam(distance, true, units::degree_t(target.GetYaw()), targetArea); //true goes to the left
-        }
-        else {
-            DriverControl();
-        }
+                        double targetArea = target.GetArea();
+                        frc::SmartDashboard::PutNumber("tagetArea", targetArea);
+                        units::meter_t distance = photon::PhotonUtils::CalculateDistanceToTarget(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_PITCH, units::radian_t{target.GetPitch()});
+                        m_drive.TractorBeam(distance, true, units::degree_t(target.GetYaw()), targetArea); //true goes to the left
+                    }
+                    else {
+                       DriverControl();
+                    }
     }, {&m_drive}));
 
     //Tractor Beam - right - experimental - robot rotates and drives to target automagically - with an offset of 6 inches to the right
@@ -175,31 +175,31 @@ void RobotContainer::ConfigureButtonBindings() {
         elevatorOverrideHeight = kElevatorForceDriveToCoDriverHeight;
         photon::PhotonTrackedTarget target = hasValidAprilTagTarget();
         if (target.GetFiducialId() > 0) {
-            double targetArea = target.GetArea();
-            //if the targeting region of target_height is set to top, this should be the height of the top of the target Thus, .17 meters plus 6.5 inches equals 0.3351 meters
-            //if this doesn't work, we can try the center of the target or the bottom of target
-            //Todo: adjust camera height based on actual measurement in constants.h, adjust target height to either top, center, or bottom?
-            units::meter_t distance = photon::PhotonUtils::CalculateDistanceToTarget(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_PITCH, units::radian_t{target.GetPitch()});
-            m_drive.TractorBeam(distance, false, units::degree_t(target.GetYaw()), targetArea); //false goes to the right
-        }
-        else {
-            DriverControl();
-        }
+                        double targetArea = target.GetArea();
+                        //if the targeting region of target_height is set to top, this should be the height of the top of the target Thus, .17 meters plus 6.5 inches equals 0.3351 meters
+                        //if this doesn't work, we can try the center of the target or the bottom of target
+                        //Todo: adjust camera height based on actual measurement in constants.h, adjust target height to either top, center, or bottom?
+                        units::meter_t distance = photon::PhotonUtils::CalculateDistanceToTarget(CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_PITCH, units::radian_t{target.GetPitch()});
+                        m_drive.TractorBeam(distance, false, units::degree_t(target.GetYaw()), targetArea); //false goes to the right
+                    }
+                    else {
+                       DriverControl();
+                    }
     }, {&m_drive}));
 
     //Photon Drive - driver still controls driving - but robot rotates front of bot facing toward visible reef april tag
     frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kB).WhileTrue(new frc2::RunCommand([this] { 
         photon::PhotonTrackedTarget target = hasValidAprilTagTarget();
         if (target.GetFiducialId() > 0) {
-            m_drive.PhotonDrive(
+                        m_drive.PhotonDrive(
                 //driver controls direction of travel, but rotation faces reef april tag
-                -units::meters_per_second_t{frc::ApplyDeadband(m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
-                -units::meters_per_second_t{frc::ApplyDeadband(m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
-                units::degree_t(target.GetYaw()));
-        }
-        else {
-            DriverControl();
-        }
+                            -units::meters_per_second_t{frc::ApplyDeadband(m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+                            -units::meters_per_second_t{frc::ApplyDeadband(m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+                            units::degree_t(target.GetYaw()));
+                    }
+                    else {
+                        DriverControl();
+                    }
       }, {&m_drive}));
 
 
@@ -234,15 +234,17 @@ void RobotContainer::ConfigureButtonBindings() {
     }, {&m_elevator}));
 
     //TODO -- implement RunCoralCollector, and ReverseCoralCollector from the coralCollector class
-    //TODO -- create the Pivot class (or use the arm for the pivot class to pivot the coral collector
+    //TODO -- create the Pivot class (or use the arm for the pivot class to pivot the coral collector]
 
-    frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kY).WhileTrue(new frc2::RunCommand([this] {
+    /*frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kY).WhileTrue(new frc2::RunCommand([this] {
         m_elevator.PivotCoralCollector(0.2);
     }, {&m_elevator}));
 
     frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kB).WhileTrue(new frc2::RunCommand([this] {
         m_elevator.PivotCoralCollector(-0.1);
-    }, {&m_elevator}));
+    }, {&m_elevator}));*/
+
+
 
 }
 

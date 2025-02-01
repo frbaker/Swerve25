@@ -93,5 +93,6 @@
     "typeinfo": "cpp",
     "valarray": "cpp",
     "variant": "cpp"
-  }
+  },
+  "wpilib.autoSaveOnDeploy": true
 }
