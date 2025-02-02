@@ -167,8 +167,8 @@ namespace CoralCollectorContants {
 }
 
 namespace ArmConstants {
- constexpr int kArmCanid = 61;
- constexpr int kArmCanid2 = 60; 
+ constexpr int kArmCanid = 75;
+ constexpr int kArmCanid2 = 76; 
  constexpr double kArmSpeed = 0.1; 
  constexpr int kArmDio = 0;
 }
