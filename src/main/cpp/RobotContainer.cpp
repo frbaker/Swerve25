@@ -95,6 +95,7 @@ void RobotContainer::DriverControl() {
             -units::radians_per_second_t{frc::ApplyDeadband(
                 m_driverController.GetRightX(), OIConstants::kDriveDeadband)},
             fieldRelative, true);
+        
         }
 }
 void RobotContainer::coDriverControl() {
@@ -236,7 +237,16 @@ void RobotContainer::ConfigureButtonBindings() {
     //TODO -- implement RunCoralCollector, and ReverseCoralCollector from the coralCollector class
 
     frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kRightBumper).WhileTrue(new frc2::RunCommand([this] {
-        m_collector.RunCoralCollector();
+        if(m_pivot.CurrentPosition() > PivotConstants::kchangespeedpoint){
+            m_collector.RunCoralCollectorSlower();
+             frc::SmartDashboard::PutNumber("Pivot angle", m_pivot.CurrentPosition());
+        }
+        else {
+            m_collector.RunCoralCollector();
+            frc::SmartDashboard::PutNumber("Pivot angle", m_pivot.CurrentPosition());
+
+        }
+        
     }, {&m_collector})).OnFalse(new frc2::InstantCommand([this] {
         m_collector.Stop();
     }, {&m_collector})); //should turn it off when false
@@ -264,7 +274,7 @@ void RobotContainer::ConfigureButtonBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    return PathPlannerAuto("From Blue Cages").ToPtr();
+    return PathPlannerAuto("test 1").ToPtr();
   /*// Set up config for trajectory
   frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
                                AutoConstants::kMaxAcceleration);

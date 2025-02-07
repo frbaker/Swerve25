@@ -21,6 +21,8 @@ class Pivot : public frc2::SubsystemBase {
   void ReversePivot();
   void Stop();
   
+void RunReducedPivotSpeed();
+
   /**
    * An example method querying a boolean state of the subsystem (for example, a
    * digital sensor).
@@ -28,6 +30,8 @@ class Pivot : public frc2::SubsystemBase {
    * @return value of some boolean subsystem state, such as a digital sensor.
    */
   bool is_arm_up();
+
+double CurrentPosition();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -44,5 +48,5 @@ class Pivot : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
   SparkMax m_Pivot{PivotConstants::kPivotCanid, SparkLowLevel::MotorType::kBrushless};
-  
+    SparkRelativeEncoder m_PivotEncoder = m_Pivot.GetEncoder();
 };

@@ -15,7 +15,9 @@ Pivot::Pivot() {
 void Pivot::RunPivot(){
   m_Pivot.Set(kPivotSpeed);
 }
-
+void Pivot::RunReducedPivotSpeed(){
+  m_Pivot.Set(kPivotSpeedDown);
+}
 void Pivot::ReversePivot(){
   m_Pivot.Set(-kPivotSpeed);
 }
@@ -24,7 +26,13 @@ void Pivot::Stop(){
   m_Pivot.Set(0.0);
 }
 
+double Pivot::CurrentPosition(){
+  return m_PivotEncoder.GetPosition();
+}
 
+bool is_arm_up(){
+  return false;
+}
 
 /*bool Arm::RunArm() {
   // Inline construction of command goes here.

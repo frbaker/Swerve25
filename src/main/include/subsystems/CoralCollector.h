@@ -18,10 +18,10 @@ class CoralCollector : public frc2::SubsystemBase {
   /**
    * Example command factory method.
    */
-  frc2::CommandPtr RunCoralCollector();
-  frc2::CommandPtr ReverseCoralCollector();
-  frc2::CommandPtr Stop();
-  
+ void RunCoralCollector();
+  void ReverseCoralCollector();
+  void Stop();
+  void RunCoralCollectorSlower();
   /**
    * An example method querying a boolean state of the subsystem (for example, a
    * digital sensor).
@@ -44,9 +44,9 @@ class CoralCollector : public frc2::SubsystemBase {
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  //SparkMax m_collector{CoralCollectorContants::kCoralCollectorCanId, SparkLowLevel::MotorType::kBrushless};
-  SparkMax m_coralCollectorLeft{CoralCollectorContants::kCoralCollectorLeftCanId, SparkLowLevel::MotorType::kBrushless};
-  SparkMax m_coralCollectorRight{CoralCollectorContants::kCoralCollectorRightCanId, SparkLowLevel::MotorType::kBrushless};
+  //SparkMax m_collector{CoralCollectorConstants::kCoralCollectorCanId, SparkLowLevel::MotorType::kBrushless};
+  SparkMax m_coralCollectorLeft{CoralCollectorConstants::kCoralCollectorLeftCanId, SparkLowLevel::MotorType::kBrushless};
+  SparkMax m_coralCollectorRight{CoralCollectorConstants::kCoralCollectorRightCanId, SparkLowLevel::MotorType::kBrushless};
   
   
 };

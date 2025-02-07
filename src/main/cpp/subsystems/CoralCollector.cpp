@@ -6,7 +6,7 @@
 #include "subsystems/CoralCollector.h"
 #include "Constants.h"
 
-using namespace CoralCollectorContants;
+using namespace CoralCollectorConstants;
 
 CoralCollector::CoralCollector() {
   // Implementation of subsystem constructor goes here.
@@ -21,32 +21,33 @@ CoralCollector::CoralCollector() {
 
 }
 
-frc2::CommandPtr CoralCollector::RunCoralCollector() {
+void CoralCollector::RunCoralCollector() {
   // Inline construction of command goes here.
   // Subsystem::RunOnce implicitly requires `this` subsystem.
-  return RunOnce([ this ] { 
     m_coralCollectorLeft.Set(kCoralCollectorSpeed);
     m_coralCollectorRight.Set(kCoralCollectorSpeed);
-    frc::SmartDashboard::PutString("CoralCollector","Forward"); 
-    });
+    frc::SmartDashboard::PutString("CoralCollector","Forward");
   //RunOnce creates a command that calls a lambda once, and then finishes.
 }
 
-frc2::CommandPtr CoralCollector::ReverseCoralCollector() {
+void CoralCollector::ReverseCoralCollector() {
   // Inline construction of command goes here.
   // Subsystem::RunOnce implicitly requires `this` subsystem.
-  return RunOnce([ this ] { 
+  
     m_coralCollectorLeft.Set(-kCoralCollectorSpeed);
     m_coralCollectorRight.Set(-kCoralCollectorSpeed);
     frc::SmartDashboard::PutString("CoralCollector","Reverse"); 
-    });
 }
 
-frc2::CommandPtr CoralCollector::Stop(){
-return RunOnce([ this ] { 
+void CoralCollector::Stop(){
   m_coralCollectorLeft.Set(0.0);
     m_coralCollectorRight.Set(0.0);
-    });
+}
+
+void CoralCollector::RunCoralCollectorSlower() {
+  m_coralCollectorLeft.Set(kCoralCollectorSpeedSlower);
+    m_coralCollectorRight.Set(kCoralCollectorSpeedSlower);
+    frc::SmartDashboard::PutString("CoralCollector","Forward");
 }
 
 bool isLoaded() {

@@ -160,10 +160,11 @@ namespace OIConstants {
     constexpr double kDriveDeadband = 0.10;
 }  // namespace OIConstants
 
-namespace CoralCollectorContants {
+namespace CoralCollectorConstants {
   constexpr int kCoralCollectorLeftCanId = 17;
   constexpr int kCoralCollectorRightCanId = 13;
-  constexpr double kCoralCollectorSpeed = 0.2;
+  constexpr double kCoralCollectorSpeed = 1;
+  constexpr double kCoralCollectorSpeedSlower = 0.5;
 }
 
 namespace ArmConstants {
@@ -173,9 +174,10 @@ namespace ArmConstants {
  constexpr int kArmDio = 0;
 }
 namespace PivotConstants {
- constexpr int kPivotCanid = 23; // should be 23
- constexpr double kPivotSpeed = 0.2; 
-
+ constexpr int kPivotCanid = 23;
+ constexpr double kPivotSpeed = 0.6;
+ constexpr double kPivotSpeedDown = 0.5; 
+constexpr double kchangespeedpoint = 64.0;
 }
 namespace ElevatorConstants {
   constexpr int kElevatorCanId = 74;
