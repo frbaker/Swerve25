@@ -22,6 +22,7 @@
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/Arm.h"
 #include "subsystems/Elevator.h"
+#include "subsystems/CoralCollector.h"
 #include <photon/PhotonUtils.h>
 
 #include <frc/DriverStation.h>
@@ -33,7 +34,12 @@ using namespace pathplanner;
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
-    //NamedCommands::registerCommand("autoScore", std::move(m_drive.PhotonDrive2())); // <- This example method returns CommandPtr
+    NamedCommands::registerCommand("runCollector", m_collector.RunCoralCollectorAuto()); // <- This example method returns CommandPtr
+    NamedCommands::registerCommand("stopCollector", m_collector.StopAuto());
+    NamedCommands::registerCommand("reverseCollector", m_collector.ReverseCoralCollectorAuto());
+    NamedCommands::registerCommand("raisePivot", m_pivot.RunPivotAuto());
+    NamedCommands::registerCommand("lowerPivot", m_pivot.ReversePivotAuto());
+    NamedCommands::registerCommand("stopPivot", m_pivot.StopAuto());
     //NamedCommands::registerCommand("autoScore", std::move(m_drive.PhotonDrive2()));
     //NamedCommands::registerCommand("autoScore", std::move(PhotonDrive2Command(&m_drive)));
 
@@ -60,7 +66,7 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ElevatorControl() {
-    m_elevator.JoyControl(frc::ApplyDeadband( m_coDriverController.GetRightY(), OIConstants::kDriveDeadband));
+    m_elevator.JoyControl(frc::ApplyDeadband( m_coDriverController.GetRightY() * 0.25, OIConstants::kDriveDeadband));
 }
 
 void RobotContainer::DriverControl() {

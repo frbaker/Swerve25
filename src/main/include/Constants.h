@@ -180,9 +180,9 @@ namespace PivotConstants {
 constexpr double kchangespeedpoint = 64.0;
 }
 namespace ElevatorConstants {
-  constexpr int kElevatorCanId = 74;
-
-  constexpr int kElevatorPivotCanId = 71;
+  constexpr int kElevatorLeftCanId = 10;
+  constexpr int kElevatorRightCanId = 31;
+  //constexpr int kElevatorEncoderCanId = 78;
 
   constexpr int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
   constexpr double kElevatorMinHeight = 0;    

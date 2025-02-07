@@ -18,8 +18,11 @@ class Pivot : public frc2::SubsystemBase {
    * Example command factory method.
    */
   void RunPivot();
+  frc2::CommandPtr RunPivotAuto();
   void ReversePivot();
+  frc2::CommandPtr ReversePivotAuto();
   void Stop();
+  frc2::CommandPtr StopAuto();
   
 void RunReducedPivotSpeed();
 

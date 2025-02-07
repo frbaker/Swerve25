@@ -53,8 +53,9 @@ class Elevator : public frc2::SubsystemBase {
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  SparkMax m_elevatorMotor{ElevatorConstants::kElevatorCanId, SparkLowLevel::MotorType::kBrushless};
-  SparkAbsoluteEncoder m_elevatorEncoder = m_elevatorMotor.GetAbsoluteEncoder();
+  SparkMax m_leftElevatorMotor{ElevatorConstants::kElevatorLeftCanId, SparkLowLevel::MotorType::kBrushless};
+  SparkMax m_rightElevatorMotor{ElevatorConstants::kElevatorRightCanId, SparkLowLevel::MotorType::kBrushless};
+  SparkAbsoluteEncoder m_elevatorEncoder = m_leftElevatorMotor.GetAbsoluteEncoder();
 
   //SparkMax m_elevatorPivot{ElevatorConstants::kElevatorPivotCanId, SparkLowLevel::MotorType::kBrushless};
  

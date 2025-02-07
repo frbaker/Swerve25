@@ -6,9 +6,7 @@
 #include "subsystems/Elevator.h"
 #include <frc/controller/PIDController.h>
 #include "Constants.h"
-
 using namespace ElevatorConstants;
-
 /*
 Tunning the PID loop
 Gradually increase P value until speed is not slugish, but doesn't overshoot or oscillate 
@@ -18,6 +16,11 @@ When happy with P and I, can adjust the D value - it will SMOOTH out the motion,
 
 Elevator::Elevator():m_setPointPIDController(0.1, 0.0, 0.0) { //TODO - tune the pid loop
   // Implementation of subsystem constructor goes here.
+  /*SparkMaxConfig invertconf;
+  invertconf.Inverted(true);
+
+  m_leftElevatorMotor.Configure(invertconf, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);*/
+
   
 }
 
@@ -27,7 +30,8 @@ void Elevator::JoyControl(double goSpeed) {
   if (goSpeed > 0) {
     //going up if we are not above maxHeight
     if (currentPosition < kElevatorMaxHeight) {
-     m_elevatorMotor.Set(goSpeed);
+     m_leftElevatorMotor.Set(goSpeed);
+     m_rightElevatorMotor.Set(goSpeed);
     }
     if (currentPosition >= kLevelThreeSetPoint){
       sendElevatorTo = kLevelFourSetPoint;
@@ -45,7 +49,8 @@ void Elevator::JoyControl(double goSpeed) {
   else{
     //doing down if we are not below MinHeight
     if (currentPosition > kElevatorMinHeight) {
-     m_elevatorMotor.Set(goSpeed);
+     m_leftElevatorMotor.Set(goSpeed);
+     m_rightElevatorMotor.Set(goSpeed);
     }
     if (currentPosition <= kTroughSetPoint){
       sendElevatorTo = 0.0;
@@ -77,11 +82,13 @@ void Elevator::UpAnotherLevel(){
   }
   double currentPosition = m_elevatorEncoder.GetPosition();
   if (std::abs(currentPosition - sendElevatorTo) <= kElevatorTolerance){ //this works like a deadband so if we are close it doesn't keep running motors
-    m_elevatorMotor.Set(0.0); 
+    m_leftElevatorMotor.Set(0.0); 
+    m_rightElevatorMotor.Set(0.0);
   }
   else{
     double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-1.0, 1.0);
-    m_elevatorMotor.Set(setPointAdjustment);
+    m_leftElevatorMotor.Set(setPointAdjustment);
+    m_rightElevatorMotor.Set(setPointAdjustment);
   }
 }
 
@@ -100,16 +107,19 @@ void Elevator::DownAnotherLevel(){
   }
   double currentPosition = m_elevatorEncoder.GetPosition();
   if (std::abs(currentPosition - sendElevatorTo) <= kElevatorTolerance){ //this works like a deadband so if we are close it doesn't keep running motors
-    m_elevatorMotor.Set(0.0); 
+    m_leftElevatorMotor.Set(0.0);
+    m_rightElevatorMotor.Set(0.0);
   }
   else{
     double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-1.0, 1.0);
-    m_elevatorMotor.Set(setPointAdjustment);
+    m_leftElevatorMotor.Set(setPointAdjustment);
+    m_rightElevatorMotor.Set(setPointAdjustment);
   }
 }
 
 void Elevator::Stop(){
-   m_elevatorMotor.Set(0);
+   m_leftElevatorMotor.Set(0);
+   m_rightElevatorMotor.Set(0);
 }
 
 double Elevator::CurrentPosition(){

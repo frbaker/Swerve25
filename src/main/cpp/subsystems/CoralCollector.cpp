@@ -30,6 +30,17 @@ void CoralCollector::RunCoralCollector() {
   //RunOnce creates a command that calls a lambda once, and then finishes.
 }
 
+frc2::CommandPtr CoralCollector::RunCoralCollectorAuto() {
+  // Inline construction of command goes here.
+  return RunOnce([this] {
+    m_coralCollectorLeft.Set(kCoralCollectorSpeed);
+    m_coralCollectorRight.Set(kCoralCollectorSpeed);
+    });
+   
+   // frc::SmartDashboard::PutString("CoralCollector","Forward");
+  //RunOnce creates a command that calls a lambda once, and then finishes.
+}
+
 void CoralCollector::ReverseCoralCollector() {
   // Inline construction of command goes here.
   // Subsystem::RunOnce implicitly requires `this` subsystem.
@@ -39,9 +50,26 @@ void CoralCollector::ReverseCoralCollector() {
     frc::SmartDashboard::PutString("CoralCollector","Reverse"); 
 }
 
+frc2::CommandPtr CoralCollector::ReverseCoralCollectorAuto() {
+  // Inline construction of command goes here.
+  // Subsystem::RunOnce implicitly requires `this` subsystem.
+    return RunOnce([this] {
+    m_coralCollectorLeft.Set(-kCoralCollectorSpeed);
+    m_coralCollectorRight.Set(-kCoralCollectorSpeed);
+    });
+   // frc::SmartDashboard::PutString("CoralCollector","Reverse"); 
+}
+
 void CoralCollector::Stop(){
   m_coralCollectorLeft.Set(0.0);
+  m_coralCollectorRight.Set(0.0);
+}
+
+frc2::CommandPtr CoralCollector::StopAuto(){
+  return RunOnce([this] {
+    m_coralCollectorLeft.Set(0.0);
     m_coralCollectorRight.Set(0.0);
+  });
 }
 
 void CoralCollector::RunCoralCollectorSlower() {

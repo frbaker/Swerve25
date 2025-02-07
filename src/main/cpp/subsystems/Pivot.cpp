@@ -15,14 +15,23 @@ Pivot::Pivot() {
 void Pivot::RunPivot(){
   m_Pivot.Set(kPivotSpeed);
 }
+frc2::CommandPtr Pivot::RunPivotAuto(){
+  m_Pivot.Set(kPivotSpeed);
+}
 void Pivot::RunReducedPivotSpeed(){
   m_Pivot.Set(kPivotSpeedDown);
 }
 void Pivot::ReversePivot(){
   m_Pivot.Set(-kPivotSpeed);
 }
+frc2::CommandPtr Pivot::ReversePivotAuto(){
+  m_Pivot.Set(-kPivotSpeed);
+}
 
 void Pivot::Stop(){
+  m_Pivot.Set(0.0);
+}
+frc2::CommandPtr Pivot::StopAuto(){
   m_Pivot.Set(0.0);
 }
 

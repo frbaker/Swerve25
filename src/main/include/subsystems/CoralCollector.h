@@ -18,9 +18,12 @@ class CoralCollector : public frc2::SubsystemBase {
   /**
    * Example command factory method.
    */
- void RunCoralCollector();
+  void RunCoralCollector();
+  frc2::CommandPtr RunCoralCollectorAuto();
   void ReverseCoralCollector();
+  frc2::CommandPtr ReverseCoralCollectorAuto();
   void Stop();
+  frc2::CommandPtr StopAuto();
   void RunCoralCollectorSlower();
   /**
    * An example method querying a boolean state of the subsystem (for example, a
