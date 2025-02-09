@@ -6,29 +6,29 @@
 #include "subsystems/Pivot.h"
 #include <frc/controller/PIDController.h>
 #include "Constants.h"
+#include <rev/config/SparkMaxConfig.h>
 
 using namespace PivotConstants;
 
 Pivot::Pivot() {
-
+  SparkMaxConfig pivFollowerConfigObj;
+  pivFollowerConfigObj.OpenLoopRampRate(1.75);
+  m_Pivot.Configure(pivFollowerConfigObj, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kNoPersistParameters);
 }
 
 void Pivot::RunPivot(){
-  double m_rampedPivot = m_pivotSlewLimiter.Calculate(kPivotSpeed);
-  m_Pivot.Set(m_rampedPivot);
+  m_Pivot.Set(kPivotSpeed);
 }
 frc2::CommandPtr Pivot::RunPivotAuto(){
   return RunOnce([this]{
-    double m_rampedPivot = m_pivotSlewLimiter.Calculate(kPivotSpeed);
-  m_Pivot.Set(m_rampedPivot);
+  m_Pivot.Set(kPivotSpeed);
   });
 }
 void Pivot::RunReducedPivotSpeed(){
   m_Pivot.Set(kPivotSpeedDown);
 }
 void Pivot::ReversePivot(){
-  double m_rampedPivot = m_pivotSlewLimiter.Calculate(kPivotSpeedDown);
-  m_Pivot.Set(-m_rampedPivot);
+  m_Pivot.Set(-kPivotSpeed);
 }
 frc2::CommandPtr Pivot::ReversePivotAuto(){
   return RunOnce([this] {
