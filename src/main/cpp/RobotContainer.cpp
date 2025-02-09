@@ -4,6 +4,7 @@
 
 #include "RobotContainer.h"
 
+
 #include <frc/controller/PIDController.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -15,6 +16,8 @@
 #include <frc2/command/button/JoystickButton.h>
 #include <units/angle.h>
 #include <units/velocity.h>
+#include <units/time.h>
+
 
 #include <utility>
 
@@ -34,12 +37,12 @@ using namespace pathplanner;
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
-    NamedCommands::registerCommand("runCollector", m_collector.RunCoralCollectorAuto()); // <- This example method returns CommandPtr
+    /*NamedCommands::registerCommand("runCollector", m_collector.RunCoralCollectorAuto()); // <- This example method returns CommandPtr
     NamedCommands::registerCommand("stopCollector", m_collector.StopAuto());
     NamedCommands::registerCommand("reverseCollector", m_collector.ReverseCoralCollectorAuto());
     NamedCommands::registerCommand("raisePivot", m_pivot.RunPivotAuto());
     NamedCommands::registerCommand("lowerPivot", m_pivot.ReversePivotAuto());
-    NamedCommands::registerCommand("stopPivot", m_pivot.StopAuto());
+    NamedCommands::registerCommand("stopPivot", m_pivot.StopAuto());*/
     //NamedCommands::registerCommand("autoScore", std::move(m_drive.PhotonDrive2()));
     //NamedCommands::registerCommand("autoScore", std::move(PhotonDrive2Command(&m_drive)));
 
@@ -66,10 +69,13 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ElevatorControl() {
-    m_elevator.JoyControl(frc::ApplyDeadband( m_coDriverController.GetRightY() * 0.25, OIConstants::kDriveDeadband));
+    /*units::unit_t<double> joyValue{m_coDriverController.GetRightY()};
+    units::unit_t<double> ramping = elevatorRamp.Calculate(joyValue);
+    m_elevator.JoyControl(frc::ApplyDeadband(ramping.value(), OIConstants::kDriveDeadband / 2));*/
+    m_elevator.JoyControl(frc::ApplyDeadband(m_coDriverController.GetRightY(), OIConstants::kDriveDeadband / 2));
 }
 
-void RobotContainer::DriverControl() {
+void RobotContainer::DriverControl() { 
         //when the elevator is up, the drive control is passed to the co-driver for small adjustments to line up to score
         if (m_elevator.CurrentPosition() > elevatorOverrideHeight) {
             //situations change rapidly - allow the driver to override and take back control if needed

@@ -8,6 +8,7 @@
 #include <frc2/command/SubsystemBase.h>
 #include <rev/SparkMax.h>
 #include "Constants.h"
+#include <frc/filter/SlewRateLimiter.h>
 
 using namespace rev::spark;
 class Pivot : public frc2::SubsystemBase {
@@ -51,5 +52,6 @@ double CurrentPosition();
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
   SparkMax m_Pivot{PivotConstants::kPivotCanid, SparkLowLevel::MotorType::kBrushless};
-    SparkRelativeEncoder m_PivotEncoder = m_Pivot.GetEncoder();
+  SparkRelativeEncoder m_PivotEncoder = m_Pivot.GetEncoder();
+  frc::SlewRateLimiter<units::scalar> m_pivotSlewLimiter{0.02 / 3_s};
 };
