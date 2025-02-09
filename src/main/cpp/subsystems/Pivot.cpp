@@ -4,35 +4,45 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/Pivot.h"
+#include <frc/controller/PIDController.h>
 #include "Constants.h"
 
 using namespace PivotConstants;
 
 Pivot::Pivot() {
-  
+
 }
 
 void Pivot::RunPivot(){
-  m_Pivot.Set(kPivotSpeed);
+  double m_rampedPivot = m_pivotSlewLimiter.Calculate(kPivotSpeed);
+  m_Pivot.Set(m_rampedPivot);
 }
 frc2::CommandPtr Pivot::RunPivotAuto(){
-  m_Pivot.Set(kPivotSpeed);
+  return RunOnce([this]{
+    double m_rampedPivot = m_pivotSlewLimiter.Calculate(kPivotSpeed);
+  m_Pivot.Set(m_rampedPivot);
+  });
 }
 void Pivot::RunReducedPivotSpeed(){
   m_Pivot.Set(kPivotSpeedDown);
 }
 void Pivot::ReversePivot(){
-  m_Pivot.Set(-kPivotSpeed);
+  double m_rampedPivot = m_pivotSlewLimiter.Calculate(kPivotSpeedDown);
+  m_Pivot.Set(-m_rampedPivot);
 }
 frc2::CommandPtr Pivot::ReversePivotAuto(){
+  return RunOnce([this] {
   m_Pivot.Set(-kPivotSpeed);
+  });
 }
 
 void Pivot::Stop(){
   m_Pivot.Set(0.0);
 }
 frc2::CommandPtr Pivot::StopAuto(){
+  return RunOnce([this] {
   m_Pivot.Set(0.0);
+  });
 }
 
 double Pivot::CurrentPosition(){

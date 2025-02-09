@@ -31,9 +31,9 @@ void Elevator::JoyControl(double goSpeed) {
     //going up if we are not above maxHeight
     if (currentPosition < kElevatorMaxHeight) {
      m_leftElevatorMotor.Set(goSpeed);
-     m_rightElevatorMotor.Set(goSpeed);
+     m_rightElevatorMotor.Set(-goSpeed);
     }
-    if (currentPosition >= kLevelThreeSetPoint){
+    /*if (currentPosition >= kLevelThreeSetPoint){
       sendElevatorTo = kLevelFourSetPoint;
     }
     else if (currentPosition >= kLevelTwoSetPoint){
@@ -44,14 +44,15 @@ void Elevator::JoyControl(double goSpeed) {
     }
     else if (currentPosition >= 0.0) {
       sendElevatorTo = kTroughSetPoint;
-    }
+    }*/
   }
   else{
     //doing down if we are not below MinHeight
     if (currentPosition > kElevatorMinHeight) {
      m_leftElevatorMotor.Set(goSpeed);
-     m_rightElevatorMotor.Set(goSpeed);
+     m_rightElevatorMotor.Set(-goSpeed);
     }
+    /*
     if (currentPosition <= kTroughSetPoint){
       sendElevatorTo = 0.0;
     }
@@ -63,7 +64,7 @@ void Elevator::JoyControl(double goSpeed) {
     }
     else if (currentPosition <= kLevelFourSetPoint) {
       sendElevatorTo = kLevelThreeSetPoint;
-    }
+    }*/
   }
 }
 
