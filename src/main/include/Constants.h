@@ -163,8 +163,8 @@ namespace OIConstants {
 namespace CoralCollectorConstants {
   constexpr int kCoralCollectorLeftCanId = 17;
   constexpr int kCoralCollectorRightCanId = 13;
-  constexpr double kCoralCollectorSpeed = 0.8;
-  constexpr double kCoralCollectorSpeedSlower = 0.5;
+  constexpr double kCoralCollectorSpeed = 0.65;
+  constexpr double kCoralCollectorSpeedSlower = 0.25;
 }
 
 namespace ArmConstants {
@@ -177,12 +177,11 @@ namespace PivotConstants {
  constexpr int kPivotCanid = 23;
  constexpr double kPivotSpeed = 0.3;
  constexpr double kPivotSpeedDown = 0.2; 
-constexpr double kchangespeedpoint = 64.0;
+ constexpr double kchangespeedpoint = -48.0;
 }
 namespace ElevatorConstants {
   constexpr int kElevatorLeftCanId = 10;
   constexpr int kElevatorRightCanId = 31;
-  //constexpr int kElevatorEncoderCanId = 78;
 
   constexpr int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
   constexpr double kElevatorMinHeight = 0;    

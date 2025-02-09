@@ -75,7 +75,11 @@ frc2::CommandPtr CoralCollector::StopAuto(){
 void CoralCollector::RunCoralCollectorSlower() {
   m_coralCollectorLeft.Set(kCoralCollectorSpeedSlower);
     m_coralCollectorRight.Set(kCoralCollectorSpeedSlower);
-    frc::SmartDashboard::PutString("CoralCollector","Forward");
+}
+
+void CoralCollector::ReverseCoralCollectorSlower() {
+  m_coralCollectorLeft.Set(-kCoralCollectorSpeedSlower);
+    m_coralCollectorRight.Set(-kCoralCollectorSpeedSlower);
 }
 
 bool isLoaded() {

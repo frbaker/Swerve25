@@ -14,6 +14,7 @@ Pivot::Pivot() {
   SparkMaxConfig pivFollowerConfigObj;
   pivFollowerConfigObj.OpenLoopRampRate(1.75);
   m_Pivot.Configure(pivFollowerConfigObj, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kNoPersistParameters);
+  m_PivotEncoder.SetPosition(0);
 }
 
 void Pivot::RunPivot(){
@@ -95,6 +96,7 @@ bool Arm::is_arm_up() {
 void Pivot::Periodic() {
   // Implementation of subsystem periodic method goes here.
   frc::SmartDashboard::PutString("Arm_Subsystem","Periodic"); 
+  frc::SmartDashboard::PutNumber("pivot angle", CurrentPosition());
 }
 
 void Pivot::SimulationPeriodic() {

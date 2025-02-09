@@ -27,12 +27,17 @@ Elevator::Elevator():m_setPointPIDController(0.1, 0.0, 0.0) { //TODO - tune the 
 void Elevator::JoyControl(double goSpeed) {
   double currentPosition = m_elevatorEncoder.GetPosition();
   frc::SmartDashboard::PutNumber("Elevator Encoder Reading", currentPosition); 
+  
+  m_leftElevatorMotor.Set(goSpeed);
+     m_rightElevatorMotor.Set(-goSpeed);
+  
   if (goSpeed > 0) {
     //going up if we are not above maxHeight
-    if (currentPosition < kElevatorMaxHeight) {
+    /*if (currentPosition < kElevatorMaxHeight) {
      m_leftElevatorMotor.Set(goSpeed);
      m_rightElevatorMotor.Set(-goSpeed);
     }
+    */
     /*if (currentPosition >= kLevelThreeSetPoint){
       sendElevatorTo = kLevelFourSetPoint;
     }
@@ -48,10 +53,11 @@ void Elevator::JoyControl(double goSpeed) {
   }
   else{
     //doing down if we are not below MinHeight
-    if (currentPosition > kElevatorMinHeight) {
+   /* if (currentPosition > kElevatorMinHeight) {
      m_leftElevatorMotor.Set(goSpeed);
      m_rightElevatorMotor.Set(-goSpeed);
     }
+    */
     /*
     if (currentPosition <= kTroughSetPoint){
       sendElevatorTo = 0.0;
@@ -89,7 +95,7 @@ void Elevator::UpAnotherLevel(){
   else{
     double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-1.0, 1.0);
     m_leftElevatorMotor.Set(setPointAdjustment);
-    m_rightElevatorMotor.Set(setPointAdjustment);
+    m_rightElevatorMotor.Set(-setPointAdjustment);
   }
 }
 
@@ -114,7 +120,7 @@ void Elevator::DownAnotherLevel(){
   else{
     double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-1.0, 1.0);
     m_leftElevatorMotor.Set(setPointAdjustment);
-    m_rightElevatorMotor.Set(setPointAdjustment);
+    m_rightElevatorMotor.Set(-setPointAdjustment);
   }
 }
 

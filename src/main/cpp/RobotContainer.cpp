@@ -72,7 +72,7 @@ void RobotContainer::ElevatorControl() {
     /*units::unit_t<double> joyValue{m_coDriverController.GetRightY()};
     units::unit_t<double> ramping = elevatorRamp.Calculate(joyValue);
     m_elevator.JoyControl(frc::ApplyDeadband(ramping.value(), OIConstants::kDriveDeadband / 2));*/
-    m_elevator.JoyControl(frc::ApplyDeadband(m_coDriverController.GetRightY(), OIConstants::kDriveDeadband / 2));
+    m_elevator.JoyControl(frc::ApplyDeadband(m_coDriverController.GetRightY(), OIConstants::kDriveDeadband));
 }
 
 void RobotContainer::DriverControl() { 
@@ -251,11 +251,9 @@ void RobotContainer::ConfigureButtonBindings() {
     frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kRightBumper).WhileTrue(new frc2::RunCommand([this] {
         if(m_pivot.CurrentPosition() > PivotConstants::kchangespeedpoint){
             m_collector.RunCoralCollectorSlower();
-             frc::SmartDashboard::PutNumber("Pivot angle", m_pivot.CurrentPosition());
         }
         else {
             m_collector.RunCoralCollector();
-            frc::SmartDashboard::PutNumber("Pivot angle", m_pivot.CurrentPosition());
 
         }
         
@@ -264,7 +262,12 @@ void RobotContainer::ConfigureButtonBindings() {
     }, {&m_collector})); //should turn it off when false
 
     frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kLeftBumper).WhileTrue(new frc2::RunCommand([this] {
-        m_collector.ReverseCoralCollector();
+        if(m_pivot.CurrentPosition() > PivotConstants::kchangespeedpoint){
+            m_collector.ReverseCoralCollectorSlower();
+        }
+        else{
+            m_collector.ReverseCoralCollector();
+        }
     }, {&m_collector})).OnFalse(new frc2::InstantCommand([this] {
         m_collector.Stop();
     }, {&m_collector})); //should turn it off when false

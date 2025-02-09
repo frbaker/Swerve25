@@ -25,6 +25,7 @@ class CoralCollector : public frc2::SubsystemBase {
   void Stop();
   frc2::CommandPtr StopAuto();
   void RunCoralCollectorSlower();
+  void ReverseCoralCollectorSlower();
   /**
    * An example method querying a boolean state of the subsystem (for example, a
    * digital sensor).
