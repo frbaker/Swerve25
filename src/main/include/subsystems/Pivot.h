@@ -53,5 +53,5 @@ double CurrentPosition();
   // declared private and exposed only through public methods.
   SparkMax m_Pivot{PivotConstants::kPivotCanid, SparkLowLevel::MotorType::kBrushless};
   SparkRelativeEncoder m_PivotEncoder = m_Pivot.GetEncoder();
-  frc::SlewRateLimiter<units::scalar> m_pivotSlewLimiter{0.5 / 1_s};
+  frc::SlewRateLimiter<units::scalar> m_pivotSlewLimiter{0.02 / 3_s};
 };

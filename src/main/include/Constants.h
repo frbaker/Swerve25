@@ -175,8 +175,8 @@ namespace ArmConstants {
 }
 namespace PivotConstants {
  constexpr int kPivotCanid = 23;
- constexpr double kPivotSpeed = 0.1;
- constexpr double kPivotSpeedDown = 0.05; 
+ constexpr double kPivotSpeed = 0.3;
+ constexpr double kPivotSpeedDown = 0.2; 
 constexpr double kchangespeedpoint = 64.0;
 }
 namespace ElevatorConstants {
