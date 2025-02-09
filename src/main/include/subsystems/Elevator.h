@@ -10,7 +10,8 @@
 #include <rev/SparkAbsoluteEncoder.h>
 #include <frc/controller/PIDController.h>
 #include "Constants.h"
-#include <rev/config/SparkMaxConfig.h>
+
+
 
 using namespace rev::spark;
 class Elevator : public frc2::SubsystemBase {
@@ -57,8 +58,10 @@ class Elevator : public frc2::SubsystemBase {
   SparkMax m_rightElevatorMotor{ElevatorConstants::kElevatorRightCanId, SparkLowLevel::MotorType::kBrushless};
   SparkAbsoluteEncoder m_elevatorEncoder = m_leftElevatorMotor.GetAbsoluteEncoder();
 
+
   //SparkMax m_elevatorPivot{ElevatorConstants::kElevatorPivotCanId, SparkLowLevel::MotorType::kBrushless};
- 
+  
+
   frc::PIDController m_setPointPIDController;
   double sendElevatorTo = 0.0;
 };

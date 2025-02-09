@@ -6,6 +6,8 @@
 #include "subsystems/Elevator.h"
 #include <frc/controller/PIDController.h>
 #include "Constants.h"
+#include <rev/config/SparkMaxConfig.h>
+
 using namespace ElevatorConstants;
 /*
 Tunning the PID loop
@@ -15,13 +17,17 @@ When happy with P and I, can adjust the D value - it will SMOOTH out the motion,
 */
 
 Elevator::Elevator():m_setPointPIDController(0.1, 0.0, 0.0) { //TODO - tune the pid loop
-  // Implementation of subsystem constructor goes here.
-  /*SparkMaxConfig invertconf;
-  invertconf.Inverted(true);
+/*
+SparkMax m_leftElevatorMotor{ElevatorConstants::kElevatorLeftCanId, SparkLowLevel::MotorType::kBrushless};
+SparkMax m_rightElevatorMotor{ElevatorConstants::kElevatorRightCanId, SparkLowLevel::MotorType::kBrushless};
+*/
 
-  m_leftElevatorMotor.Configure(invertconf, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);*/
+SparkMaxConfig elFollowerConfigObj;
+elFollowerConfigObj.Follow(kElevatorLeftCanId, true);
+elFollowerConfigObj.OpenLoopRampRate(0.5);
+m_rightElevatorMotor.Configure(elFollowerConfigObj, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kNoPersistParameters);
 
-  
+
 }
 
 void Elevator::JoyControl(double goSpeed) {

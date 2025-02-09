@@ -5,11 +5,21 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "subsystems/Pivot.h"
 #include "Constants.h"
+#include <rev/config/SparkMaxConfig.h>
 
 using namespace PivotConstants;
 
 Pivot::Pivot() {
-  
+  SparkMaxConfig pivFollowerConfigObj;
+  pivFollowerConfigObj.OpenLoopRampRate(0.5);
+  m_Pivot.Configure(pivFollowerConfigObj, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kNoPersistParameters);
+
+
+/*
+  m_Pivot.SetOpenLoopRampRate(double rate);
+  m_Pivot.SetInverted();
+  m_Pivot.Configure()
+  */
 }
 
 void Pivot::RunPivot(){

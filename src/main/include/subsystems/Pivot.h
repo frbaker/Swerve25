@@ -52,4 +52,5 @@ double CurrentPosition();
   // declared private and exposed only through public methods.
   SparkMax m_Pivot{PivotConstants::kPivotCanid, SparkLowLevel::MotorType::kBrushless};
     SparkRelativeEncoder m_PivotEncoder = m_Pivot.GetEncoder();
+    
 };
