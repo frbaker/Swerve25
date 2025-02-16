@@ -20,7 +20,8 @@ Elevator::Elevator():m_setPointPIDController(0.1, 0.0, 0.0) { //TODO - tune the 
   invertconf.Inverted(true);
 
   m_elevatorMotor.Configure(invertconf, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);*/
-
+  m_elevatorEncoder.SetPosition(0);
+  sendElevatorTo = kTroughSetPoint;
   
 }
 
@@ -73,7 +74,8 @@ void Elevator::JoyControl(double goSpeed) {
   }
 }
 
-void Elevator::UpAnotherLevel(){
+void Elevator::SetpointMovement(){
+  /*frc::SmartDashboard::PutString("Running", "Up Another Levl");
   if (sendElevatorTo == 0.0) {
     sendElevatorTo = kTroughSetPoint;
   }
@@ -86,38 +88,19 @@ void Elevator::UpAnotherLevel(){
   else if (sendElevatorTo == kLevelThreeSetPoint){
     sendElevatorTo = kLevelFourSetPoint;
   }
+  frc::SmartDashboard::PutNumber("Current Elevator Pos", currentPosition);*/
   double currentPosition = m_elevatorEncoder.GetPosition();
   if (std::abs(currentPosition - sendElevatorTo) <= kElevatorTolerance){ //this works like a deadband so if we are close it doesn't keep running motors
     m_elevatorMotor.Set(0.0);   
     }
   else{
-    double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-1.0, 1.0);
+    double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-0.7, 0.7);
     m_elevatorMotor.Set(setPointAdjustment);
+    frc::SmartDashboard::PutNumber("ElevatorSetPoint", setPointAdjustment);
+    frc::SmartDashboard::PutNumber("SendElevatorTo", sendElevatorTo);
   }
 }
 
-void Elevator::DownAnotherLevel(){
-  if (sendElevatorTo == kLevelFourSetPoint) {
-    sendElevatorTo = kLevelThreeSetPoint;
-  }
-  else if (sendElevatorTo == kLevelThreeSetPoint){
-    sendElevatorTo = kLevelTwoSetPoint;
-  }
-  else if (sendElevatorTo == kLevelTwoSetPoint){
-    sendElevatorTo = kTroughSetPoint;
-  }
-  else if (sendElevatorTo == kTroughSetPoint){
-    sendElevatorTo = 0.0;
-  }
-  double currentPosition = m_elevatorEncoder.GetPosition();
-  if (std::abs(currentPosition - sendElevatorTo) <= kElevatorTolerance){ //this works like a deadband so if we are close it doesn't keep running motors
-    m_elevatorMotor.Set(0.0);
-  }
-  else{
-    double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-1.0, 1.0);
-    m_elevatorMotor.Set(setPointAdjustment);
-  }
-}
 
 void Elevator::Stop(){
    m_elevatorMotor.Set(0);
@@ -127,10 +110,31 @@ double Elevator::CurrentPosition(){
   return m_elevatorEncoder.GetPosition();
 }
 
+void Elevator::ResetEncoder(){
+  m_elevatorEncoder.SetPosition(0);
+}
+
 
 void Elevator::Periodic() {
   // Implementation of subsystem periodic method goes here.
 }
+
+void Elevator::SetPoint(double point){
+  if(point == 0){
+    sendElevatorTo = kTroughSetPoint;
+  }
+    if(point == 1){
+    sendElevatorTo = kLevelTwoSetPoint;
+  }
+  if(point == 2){
+    sendElevatorTo = kLevelThreeSetPoint;
+  }
+  if(point == 3){
+    sendElevatorTo = kLevelFourSetPoint;
+  }
+  frc::SmartDashboard::PutNumber("SendElevatorTo", sendElevatorTo);
+}
+
 
 void Elevator::SimulationPeriodic() {
   // Implementation of subsystem simulation periodic method goes here.

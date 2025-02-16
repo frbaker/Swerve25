@@ -157,14 +157,14 @@ namespace AutoConstants {
 namespace OIConstants {
     constexpr int kDriverControllerPort = 0;
     constexpr int kCoDriverControllerPort = 1;
-    constexpr double kDriveDeadband = 0.10;
+    constexpr double kDriveDeadband = 0.05;
 }  // namespace OIConstants
 
 namespace CoralCollectorConstants {
   constexpr int kCoralCollectorLeftCanId = 17;
   constexpr int kCoralCollectorRightCanId = 13;
-  constexpr double kCoralCollectorSpeed = 0.65;
-  constexpr double kCoralCollectorSpeedSlower = 0.25;
+  constexpr double kCoralCollectorSpeed = 0.35; // 0.65
+  constexpr double kCoralCollectorSpeedSlower = 0.1;
 }
 
 namespace ArmConstants {
@@ -178,6 +178,11 @@ namespace PivotConstants {
  constexpr double kPivotSpeed = 0.3;
  constexpr double kPivotSpeedDown = 0.2; 
  constexpr double kchangespeedpoint = -48.0;
+
+ constexpr double kTroughSetPoint = -17; // todo - needs to be measured and set
+ constexpr double kLevelTwoThreeSetPoint = -17; // todo - needs to be measured and set
+ constexpr double kLevelFourSetPoint = -17; // todo - needs to be measured and set
+ constexpr double kPivotTolerance = 0.05; // todo - may need to be adjusted
 }
 namespace ElevatorConstants {
   constexpr int kElevatorLeftCanId = 10;
@@ -185,11 +190,19 @@ namespace ElevatorConstants {
   constexpr int reefTags[12] = {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
   constexpr double kElevatorMinHeight = 0;    
   constexpr double kElevatorMaxHeight = 25;      //todo - needs to be measured and set
-  constexpr double kTroughSetPoint = 5;          //todo - needs to be measured and set
-  constexpr double kLevelTwoSetPoint = 10;       //todo - needs to be measured and set
-  constexpr double kLevelThreeSetPoint = 15;     //todo - needs to be measured and set
-  constexpr double kLevelFourSetPoint = 20;      //todo - needs to be measured and set
-  constexpr double kPickUpSetPoint = 15;         //todo - needs to be measured and set
+  /*constexpr double kTroughSetPoint = -48;          //todo - needs to be measured and set
+  constexpr double kLevelTwoSetPoint = -102;       //todo - needs to be measured and set
+  constexpr double kLevelThreeSetPoint = -102;     //todo - needs to be measured and set
+  constexpr double kLevelFourSetPoint = -165; 
+  */     //todo - needs to be measured and set
+ 
+ constexpr double kTroughSetPoint = 0;          //todo - needs to be measured and set
+  constexpr double kLevelTwoSetPoint = -48;       //todo - needs to be measured and set
+  constexpr double kLevelThreeSetPoint = -102;     //todo - needs to be measured and set
+  constexpr double kLevelFourSetPoint = -166;      //todo - needs to be measured and set
+ 
+ 
+  constexpr double kPickUpSetPoint = -48;         //todo - needs to be measured and set
   constexpr double kElevatorTolerance = 0.05;    //todo - may need to be adjusted
   constexpr double kElevatorToCloseToReef = 100.0; //todo - determine when the area occupied by an april tag means we are TOO close to the reef and raising or lowering the elevator would damage the bot.
   }

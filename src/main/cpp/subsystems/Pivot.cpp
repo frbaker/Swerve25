@@ -10,11 +10,12 @@
 
 using namespace PivotConstants;
 
-Pivot::Pivot() {
+Pivot::Pivot():m_setPointPIDController(0.1, 0.0, 0.0) {
   SparkMaxConfig pivFollowerConfigObj;
   pivFollowerConfigObj.OpenLoopRampRate(1.75);
   m_Pivot.Configure(pivFollowerConfigObj, SparkMax::ResetMode::kResetSafeParameters, SparkMax::PersistMode::kNoPersistParameters);
   m_PivotEncoder.SetPosition(0);
+  sendPivotTo = 0;
 }
 
 void Pivot::RunPivot(){
@@ -52,6 +53,39 @@ double Pivot::CurrentPosition(){
 
 bool is_arm_up(){
   return false;
+}
+
+void Pivot::ResetEncoder(){
+  m_PivotEncoder.SetPosition(0);
+}
+
+void Pivot::SetPoint(double point){
+  if(point == 0){
+    sendPivotTo = kTroughSetPoint;
+  }
+  if(point == 1){
+    sendPivotTo = kLevelTwoThreeSetPoint;
+  }
+  if(point == 2){
+    sendPivotTo = kLevelTwoThreeSetPoint;
+  }
+  if(point == 3){
+    sendPivotTo = kLevelFourSetPoint;
+  }
+}
+
+void Pivot::SetpointMovement(){
+  double currentPosition = m_PivotEncoder.GetPosition();
+  if (std::abs(currentPosition - sendPivotTo) <= kPivotTolerance){ //this works like a deadband so if we are close it doesn't keep running motors
+    m_Pivot.Set(0.0);   
+    }
+  else{
+    double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendPivotTo),-0.3, 0.3); // todo - may need to adjust the clamp values
+    m_Pivot.Set(setPointAdjustment);
+    frc::SmartDashboard::PutNumber("PivotSetPoint", setPointAdjustment);
+    frc::SmartDashboard::PutNumber("SendPivotTo", sendPivotTo);
+  }
+
 }
 
 /*bool Arm::RunArm() {

@@ -9,6 +9,7 @@
 #include <rev/SparkMax.h>
 #include "Constants.h"
 #include <frc/filter/SlewRateLimiter.h>
+#include <frc/controller/PIDController.h>
 
 using namespace rev::spark;
 class Pivot : public frc2::SubsystemBase {
@@ -24,6 +25,9 @@ class Pivot : public frc2::SubsystemBase {
   frc2::CommandPtr ReversePivotAuto();
   void Stop();
   frc2::CommandPtr StopAuto();
+  void ResetEncoder();
+  void SetPoint(double point);
+  void SetpointMovement();
   
 void RunReducedPivotSpeed();
 
@@ -54,4 +58,6 @@ double CurrentPosition();
   SparkMax m_Pivot{PivotConstants::kPivotCanid, SparkLowLevel::MotorType::kBrushless};
   SparkRelativeEncoder m_PivotEncoder = m_Pivot.GetEncoder();
   frc::SlewRateLimiter<units::scalar> m_pivotSlewLimiter{0.02 / 3_s};
+  frc::PIDController m_setPointPIDController;
+  double sendPivotTo;
 };

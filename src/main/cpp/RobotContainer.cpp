@@ -73,6 +73,28 @@ void RobotContainer::ElevatorControl() {
     units::unit_t<double> ramping = elevatorRamp.Calculate(joyValue);
     m_elevator.JoyControl(frc::ApplyDeadband(ramping.value(), OIConstants::kDriveDeadband / 2));*/
     m_elevator.JoyControl(frc::ApplyDeadband(m_coDriverController.GetRightY(), OIConstants::kDriveDeadband));
+    if(!m_ElevatorSwitch.Get()){ //False when pushed down 
+        m_elevator.ResetEncoder();
+    }
+    if(!m_PivotSwitch.Get()){ //False when pushed down 
+        m_pivot.ResetEncoder();
+    }
+    if(m_coDriverController.GetPOV() == 0){
+        m_elevator.SetPoint(3);
+        frc::SmartDashboard::PutString("Level", "Level 4");
+    }
+    if(m_coDriverController.GetPOV() == 90){
+        m_elevator.SetPoint(2);
+        frc::SmartDashboard::PutString("Level", "Level 3");
+    }
+    if(m_coDriverController.GetPOV() == 270){
+        m_elevator.SetPoint(1);
+        frc::SmartDashboard::PutString("Level", "Level 2");
+    }
+    if(m_coDriverController.GetPOV() == 180){
+        m_elevator.SetPoint(0);
+        frc::SmartDashboard::PutString("Level", "Trough");
+    }
 }
 
 void RobotContainer::DriverControl() { 
@@ -223,28 +245,29 @@ void RobotContainer::ConfigureButtonBindings() {
         if (target.GetFiducialId() > 0) {
             double targetArea = target.GetArea();
             if (targetArea < ElevatorConstants::kElevatorToCloseToReef){
-                m_elevator.UpAnotherLevel();
+                m_elevator.SetpointMovement();
             }
         }
         else{
-            m_elevator.UpAnotherLevel();
+            m_elevator.SetpointMovement();
+            
         }
     }, {&m_elevator}));
 
-    frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kA).WhileTrue(new frc2::RunCommand([this] {
+    /*frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kA).WhileTrue(new frc2::RunCommand([this] {
          //it's possible that we are too close to the reef to safely lower the elevator
         //if an april tag is present - to avoid damaging the robot we run only if it is safe. 
         photon::PhotonTrackedTarget target = hasValidAprilTagTarget();
         if (target.GetFiducialId() > 0) {
             double targetArea = target.GetArea();
             if (targetArea < ElevatorConstants::kElevatorToCloseToReef){
-                m_elevator.DownAnotherLevel();
+                m_elevator.SetpointMovement();
             }
         }
         else{
-            m_elevator.DownAnotherLevel();
+            m_elevator.SetpointMovement();
         }
-    }, {&m_elevator}));
+    }, {&m_elevator}));*/
 
     //TODO -- implement RunCoralCollector, and ReverseCoralCollector from the coralCollector class
 
@@ -283,6 +306,8 @@ void RobotContainer::ConfigureButtonBindings() {
     }, {&m_pivot})).OnFalse(new frc2::InstantCommand([this] {
         m_pivot.Stop();
     }, {&m_pivot})); //should turn it off when false
+
+    
 
 
 

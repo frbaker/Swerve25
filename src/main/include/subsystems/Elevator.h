@@ -26,11 +26,12 @@ class Elevator : public frc2::SubsystemBase {
   frc2::CommandPtr GoToLevel2();
   frc2::CommandPtr GoToLevel3();
   frc2::CommandPtr GoToLevel4();
-  void UpAnotherLevel();
-  void DownAnotherLevel();
+  void SetpointMovement();
+  void SetPoint(double point);
 
   void Stop();
   double CurrentPosition();
+  void ResetEncoder();
   
   /**
    * An example method querying a boolean state of the subsystem (for example, a
@@ -54,7 +55,7 @@ class Elevator : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
   SparkMax m_elevatorMotor{ElevatorConstants::kElevatorLeftCanId, SparkLowLevel::MotorType::kBrushless};
-  SparkAbsoluteEncoder m_elevatorEncoder = m_elevatorMotor.GetAbsoluteEncoder();
+  SparkRelativeEncoder m_elevatorEncoder = m_elevatorMotor.GetEncoder();
 
   //SparkMax m_elevatorPivot{ElevatorConstants::kElevatorPivotCanId, SparkLowLevel::MotorType::kBrushless};
  
