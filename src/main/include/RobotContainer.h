@@ -23,6 +23,7 @@
 #include "subsystems/Arm.h"
 #include "subsystems/Elevator.h"
 #include "subsystems/Pivot.h"
+#include "subsystems/Climber.h"
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -51,12 +52,14 @@ class RobotContainer {
   CoralCollector m_collector;
   Pivot m_pivot;
   Elevator m_elevator;
+  Climber m_climber;
   frc::SendableChooser<frc2::Command*> m_chooser;
 
   photon::PhotonCamera camera{"boom"};
   bool isValueInArray(int value, int array[], int size);
   void DriverControl();
   void ElevatorControl();
+  void ClimberControl();
   void coDriverControl();
   photon::PhotonTrackedTarget hasValidAprilTagTarget();
   // The chooser for the autonomous routines

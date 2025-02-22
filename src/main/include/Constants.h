@@ -157,13 +157,13 @@ namespace AutoConstants {
 namespace OIConstants {
     constexpr int kDriverControllerPort = 0;
     constexpr int kCoDriverControllerPort = 1;
-    constexpr double kDriveDeadband = 0.05;
+    constexpr double kDriveDeadband = 0.02;
 }  // namespace OIConstants
 
 namespace CoralCollectorConstants {
   constexpr int kCoralCollectorLeftCanId = 17;
   constexpr int kCoralCollectorRightCanId = 13;
-  constexpr double kCoralCollectorSpeed = 0.35; // 0.65
+  constexpr double kCoralCollectorSpeed = 0.40; // 0.65
   constexpr double kCoralCollectorSpeedSlower = 0.1;
 }
 
@@ -180,7 +180,7 @@ namespace PivotConstants {
  constexpr double kchangespeedpoint = -48.0;
 
  constexpr double kTroughSetPoint = -17; // todo - needs to be measured and set
- constexpr double kLevelTwoThreeSetPoint = -17; // todo - needs to be measured and set
+ constexpr double kLevelTwoThreeSetPoint = -17; // -17
  constexpr double kLevelFourSetPoint = -17; // todo - needs to be measured and set
  constexpr double kPivotTolerance = 0.05; // todo - may need to be adjusted
 }
@@ -196,9 +196,9 @@ namespace ElevatorConstants {
   constexpr double kLevelFourSetPoint = -165; 
   */     //todo - needs to be measured and set
  
- constexpr double kTroughSetPoint = 0;          //todo - needs to be measured and set
-  constexpr double kLevelTwoSetPoint = -48;       //todo - needs to be measured and set
-  constexpr double kLevelThreeSetPoint = -102;     //todo - needs to be measured and set
+  constexpr double kTroughSetPoint = 0;          //todo - needs to be measured and set
+  constexpr double kLevelTwoSetPoint = -52;       //todo - needs to be measured and set
+  constexpr double kLevelThreeSetPoint = -110;     //todo - needs to be measured and set
   constexpr double kLevelFourSetPoint = -166;      //todo - needs to be measured and set
  
  
@@ -206,6 +206,10 @@ namespace ElevatorConstants {
   constexpr double kElevatorTolerance = 0.05;    //todo - may need to be adjusted
   constexpr double kElevatorToCloseToReef = 100.0; //todo - determine when the area occupied by an april tag means we are TOO close to the reef and raising or lowering the elevator would damage the bot.
   }
+
+namespace ClimberConstants {
+  constexpr int kClimberMotorCanId = 700;
+}
 
 //17 = right coral collector
 //23 = left coral collector

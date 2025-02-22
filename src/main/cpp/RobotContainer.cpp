@@ -66,6 +66,12 @@ RobotContainer::RobotContainer() {
             ElevatorControl();
         },
         {&m_elevator}));
+
+    m_climber.SetDefaultCommand(frc2::RunCommand(
+        [this]{
+            ClimberControl();
+        },
+        {&m_climber}));
 }
 
 void RobotContainer::ElevatorControl() {
@@ -96,6 +102,15 @@ void RobotContainer::ElevatorControl() {
         frc::SmartDashboard::PutString("Level", "Trough");
     }
 }
+
+void RobotContainer::ClimberControl(){
+    m_climber.RunClimber(frc::ApplyDeadband(m_driverController.GetRightTriggerAxis(), OIConstants::kDriveDeadband));
+    if(m_driverController.GetAButtonPressed()){
+        m_climber.MovePigeon();
+    }
+}
+
+
 
 void RobotContainer::DriverControl() { 
         //when the elevator is up, the drive control is passed to the co-driver for small adjustments to line up to score
@@ -250,7 +265,7 @@ void RobotContainer::ConfigureButtonBindings() {
         }
         else{
             m_elevator.SetpointMovement();
-            
+           // m_pivot.SetpointMovement();
         }
     }, {&m_elevator}));
 
