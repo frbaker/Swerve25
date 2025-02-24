@@ -20,10 +20,10 @@
 #include <photon/PhotonCamera.h>
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/CoralCollector.h"
-#include "subsystems/Arm.h"
 #include "subsystems/Elevator.h"
 #include "subsystems/Pivot.h"
 #include "subsystems/Climber.h"
+#include "subsystems/LEDS.h"
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -44,6 +44,7 @@ class RobotContainer {
 
   frc::DigitalInput m_ElevatorSwitch{0};
   frc::DigitalInput m_PivotSwitch{1};
+  frc::DigitalInput m_PivotDownSwitch{2};
                       
   // The robot's subsystems and commands are defined here...
 
@@ -53,6 +54,8 @@ class RobotContainer {
   Pivot m_pivot;
   Elevator m_elevator;
   Climber m_climber;
+  LEDS m_leds;
+
   frc::SendableChooser<frc2::Command*> m_chooser;
 
   photon::PhotonCamera camera{"boom"};

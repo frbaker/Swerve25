@@ -29,9 +29,15 @@ class Elevator : public frc2::SubsystemBase {
   void SetpointMovement();
   void SetPoint(double point);
 
+  frc2::CommandPtr SetPointCmd(double point);
+
   void Stop();
   double CurrentPosition();
   void ResetEncoder();
+
+  void TurnOffSetPoint();
+
+  double sendElevatorTo = 0.0;
   
   /**
    * An example method querying a boolean state of the subsystem (for example, a
@@ -60,5 +66,5 @@ class Elevator : public frc2::SubsystemBase {
   //SparkMax m_elevatorPivot{ElevatorConstants::kElevatorPivotCanId, SparkLowLevel::MotorType::kBrushless};
  
   frc::PIDController m_setPointPIDController;
-  double sendElevatorTo = 0.0;
+  bool isSetPointMoving;
 };

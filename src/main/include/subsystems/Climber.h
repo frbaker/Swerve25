@@ -17,15 +17,18 @@ class Climber : public frc2::SubsystemBase{
 
         void RunClimber(double runSpeed);
 
-        void MovePigeon();
+        bool MovePigeon();
 
         void Periodic() override;
 
         void SimulationPeriodic() override;
 
+        double EncoderValue();
+
 
     private:
         SparkMax m_climberMotor{ClimberConstants::kClimberMotorCanId, SparkLowLevel::MotorType::kBrushless};
         frc::PWM m_pigeonServo{0};
+        SparkRelativeEncoder m_climberEncoder = m_climberMotor.GetEncoder();
 
 };

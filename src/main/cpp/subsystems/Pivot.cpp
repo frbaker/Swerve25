@@ -19,7 +19,12 @@ Pivot::Pivot():m_setPointPIDController(0.1, 0.0, 0.0) {
 }
 
 void Pivot::RunPivot(){
-  m_Pivot.Set(kPivotSpeed);
+  if(m_PivotEncoder.GetPosition() < 0){
+     m_Pivot.Set(kPivotSpeed);
+  }
+  else{
+    m_Pivot.Set(0);
+  }
 }
 frc2::CommandPtr Pivot::RunPivotAuto(){
   return RunOnce([this]{
@@ -29,7 +34,7 @@ frc2::CommandPtr Pivot::RunPivotAuto(){
 void Pivot::RunReducedPivotSpeed(){
   m_Pivot.Set(kPivotSpeedDown);
 }
-void Pivot::ReversePivot(){
+void Pivot::ReversePivot(){ 
   m_Pivot.Set(-kPivotSpeed);
 }
 frc2::CommandPtr Pivot::ReversePivotAuto(){
@@ -57,6 +62,10 @@ bool is_arm_up(){
 
 void Pivot::ResetEncoder(){
   m_PivotEncoder.SetPosition(0);
+}
+
+void Pivot::ResetEncoderDown(){
+  m_PivotEncoder.SetPosition(-50);
 }
 
 void Pivot::SetPoint(double point){

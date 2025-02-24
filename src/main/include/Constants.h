@@ -163,21 +163,15 @@ namespace OIConstants {
 namespace CoralCollectorConstants {
   constexpr int kCoralCollectorLeftCanId = 17;
   constexpr int kCoralCollectorRightCanId = 13;
-  constexpr double kCoralCollectorSpeed = 0.40; // 0.65
+  constexpr double kCoralCollectorSpeed = 0.30; // 0.65
   constexpr double kCoralCollectorSpeedSlower = 0.1;
 }
 
-namespace ArmConstants {
- constexpr int kArmCanid = 75;
- constexpr int kArmCanid2 = 76; 
- constexpr double kArmSpeed = 0.1; 
- constexpr int kArmDio = 0;
-}
 namespace PivotConstants {
- constexpr int kPivotCanid = 23;
+ constexpr int kPivotCanid = 22;
  constexpr double kPivotSpeed = 0.3;
  constexpr double kPivotSpeedDown = 0.2; 
- constexpr double kchangespeedpoint = -48.0;
+ constexpr double kchangespeedpoint = -45.0;
 
  constexpr double kTroughSetPoint = -17; // todo - needs to be measured and set
  constexpr double kLevelTwoThreeSetPoint = -17; // -17
@@ -196,9 +190,9 @@ namespace ElevatorConstants {
   constexpr double kLevelFourSetPoint = -165; 
   */     //todo - needs to be measured and set
  
-  constexpr double kTroughSetPoint = 0;          //todo - needs to be measured and set
-  constexpr double kLevelTwoSetPoint = -52;       //todo - needs to be measured and set
-  constexpr double kLevelThreeSetPoint = -110;     //todo - needs to be measured and set
+  constexpr double kTroughSetPoint = 0;        //todo - needs to be measured and set
+  constexpr double kLevelTwoSetPoint = -107;       //todo - needs to be measured and set
+  constexpr double kLevelThreeSetPoint = -155;     //todo - needs to be measured and set
   constexpr double kLevelFourSetPoint = -166;      //todo - needs to be measured and set
  
  
@@ -208,7 +202,7 @@ namespace ElevatorConstants {
   }
 
 namespace ClimberConstants {
-  constexpr int kClimberMotorCanId = 700;
+  constexpr int kClimberMotorCanId = 31;
 }
 
 //17 = right coral collector

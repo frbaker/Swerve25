@@ -26,6 +26,7 @@ class Pivot : public frc2::SubsystemBase {
   void Stop();
   frc2::CommandPtr StopAuto();
   void ResetEncoder();
+  void ResetEncoderDown();
   void SetPoint(double point);
   void SetpointMovement();
   

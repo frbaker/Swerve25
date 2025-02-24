@@ -23,7 +23,6 @@
 
 #include "Constants.h"
 #include "subsystems/DriveSubsystem.h"
-#include "subsystems/Arm.h"
 #include "subsystems/Elevator.h"
 #include "subsystems/CoralCollector.h"
 #include <photon/PhotonUtils.h>
@@ -37,8 +36,11 @@ using namespace pathplanner;
 using namespace DriveConstants;
 
 RobotContainer::RobotContainer() {
-    /*NamedCommands::registerCommand("runCollector", m_collector.RunCoralCollectorAuto()); // <- This example method returns CommandPtr
-    NamedCommands::registerCommand("stopCollector", m_collector.StopAuto());
+    NamedCommands::registerCommand("Setpoint3", m_elevator.SetPointCmd(2));
+    NamedCommands::registerCommand("lowerPivot", m_pivot.ReversePivotAuto());
+    NamedCommands::registerCommand("stopPivot", m_pivot.StopAuto());
+    NamedCommands::registerCommand("reverseCoralCollector", m_collector.ReverseCoralCollectorAuto());
+    /*NamedCommands::registerCommand("stopCollector", m_collector.StopAuto());
     NamedCommands::registerCommand("reverseCollector", m_collector.ReverseCoralCollectorAuto());
     NamedCommands::registerCommand("raisePivot", m_pivot.RunPivotAuto());
     NamedCommands::registerCommand("lowerPivot", m_pivot.ReversePivotAuto());
@@ -81,34 +83,42 @@ void RobotContainer::ElevatorControl() {
     m_elevator.JoyControl(frc::ApplyDeadband(m_coDriverController.GetRightY(), OIConstants::kDriveDeadband));
     if(!m_ElevatorSwitch.Get()){ //False when pushed down 
         m_elevator.ResetEncoder();
+    } //A
+    if(!m_PivotSwitch.Get()){ //False when pushed down //A
+        m_pivot.ResetEncoder(); //A
+    } //A
+    if(!m_PivotDownSwitch.Get()){
+        m_pivot.ResetEncoderDown();
     }
-    if(!m_PivotSwitch.Get()){ //False when pushed down 
-        m_pivot.ResetEncoder();
+    if(m_coDriverController.GetPOV() == 0){ //A
+        m_elevator.SetPoint(3); //A
+        frc::SmartDashboard::PutString("Level", "Level 4"); //A
     }
-    if(m_coDriverController.GetPOV() == 0){
-        m_elevator.SetPoint(3);
-        frc::SmartDashboard::PutString("Level", "Level 4");
+    if(m_coDriverController.GetPOV() == 90){ //A
+        m_elevator.SetPoint(2); //A
+        frc::SmartDashboard::PutString("Level", "Level 3"); //A
     }
-    if(m_coDriverController.GetPOV() == 90){
-        m_elevator.SetPoint(2);
-        frc::SmartDashboard::PutString("Level", "Level 3");
-    }
-    if(m_coDriverController.GetPOV() == 270){
-        m_elevator.SetPoint(1);
-        frc::SmartDashboard::PutString("Level", "Level 2");
-    }
-    if(m_coDriverController.GetPOV() == 180){
-        m_elevator.SetPoint(0);
-        frc::SmartDashboard::PutString("Level", "Trough");
-    }
+    if(m_coDriverController.GetPOV() == 270){ //A
+        m_elevator.SetPoint(1); //A 
+        frc::SmartDashboard::PutString("Level", "Level 2"); //A
+    } //A
+    if(m_coDriverController.GetPOV() == 180){ //A
+        m_elevator.SetPoint(0); //A
+        frc::SmartDashboard::PutString("Level", "Trough"); //A
+    } //A
 }
 
-void RobotContainer::ClimberControl(){
-    m_climber.RunClimber(frc::ApplyDeadband(m_driverController.GetRightTriggerAxis(), OIConstants::kDriveDeadband));
-    if(m_driverController.GetAButtonPressed()){
-        m_climber.MovePigeon();
-    }
-}
+void RobotContainer::ClimberControl(){ //A
+    m_climber.RunClimber(frc::ApplyDeadband((-m_driverController.GetRightTriggerAxis()/3) * (m_climber.EncoderValue() > -50), OIConstants::kDriveDeadband)); //A
+    if(m_driverController.GetAButtonPressed()){ //A
+        fieldRelative = m_climber.MovePigeon(); //A
+    } //A
+
+   if(m_coDriverController.GetXButtonPressed()){ //A
+        m_leds.TurnOnLED(m_coDriverController.GetXButtonPressed()); //A
+    } //A
+
+} //A
 
 
 
@@ -253,7 +263,7 @@ void RobotContainer::ConfigureButtonBindings() {
       }, {&m_drive}));
 
 
-    frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kX).WhileTrue(new frc2::RunCommand([this] {
+    /*frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kX).WhileTrue(new frc2::RunCommand([this] {
         //it's possible that we are too close to the reef to safely raise the elevator
         //if an april tag is present - to avoid damaging the robot we run only if it is safe. 
         photon::PhotonTrackedTarget target = hasValidAprilTagTarget();
@@ -267,7 +277,7 @@ void RobotContainer::ConfigureButtonBindings() {
             m_elevator.SetpointMovement();
            // m_pivot.SetpointMovement();
         }
-    }, {&m_elevator}));
+    }, {&m_elevator}));*/
 
     /*frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kA).WhileTrue(new frc2::RunCommand([this] {
          //it's possible that we are too close to the reef to safely lower the elevator
@@ -329,7 +339,7 @@ void RobotContainer::ConfigureButtonBindings() {
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
-    return PathPlannerAuto("test 1").ToPtr();
+    return PathPlannerAuto("From Right Wall").ToPtr();
   /*// Set up config for trajectory
   frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
                                AutoConstants::kMaxAcceleration);

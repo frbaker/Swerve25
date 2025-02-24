@@ -22,55 +22,22 @@ Elevator::Elevator():m_setPointPIDController(0.1, 0.0, 0.0) { //TODO - tune the 
   m_elevatorMotor.Configure(invertconf, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);*/
   m_elevatorEncoder.SetPosition(0);
   sendElevatorTo = kTroughSetPoint;
-  
+  isSetPointMoving = false;
 }
 
 void Elevator::JoyControl(double goSpeed) {
-  double currentPosition = m_elevatorEncoder.GetPosition();
-  frc::SmartDashboard::PutNumber("Elevator Encoder Reading", currentPosition); 
-  
-  m_elevatorMotor.Set(goSpeed); 
-  
-  if (goSpeed > 0) {
-    //going up if we are not above maxHeight
-    /*if (currentPosition < kElevatorMaxHeight) {
-     m_elevatorMotor.Set(goSpeed);
-     m_rightElevatorMotor.Set(-goSpeed);
-    }
-    */
-    /*if (currentPosition >= kLevelThreeSetPoint){
-      sendElevatorTo = kLevelFourSetPoint;
-    }
-    else if (currentPosition >= kLevelTwoSetPoint){
-      sendElevatorTo = kLevelThreeSetPoint;
-    }
-    else if (currentPosition >= kTroughSetPoint){
-      sendElevatorTo = kLevelTwoSetPoint;
-    }
-    else if (currentPosition >= 0.0) {
-      sendElevatorTo = kTroughSetPoint;
-    }*/
+  frc::SmartDashboard::PutNumber("Elevator Speed", goSpeed);
+  if(goSpeed == 0 && isSetPointMoving){
+    SetpointMovement();
+    frc::SmartDashboard::PutString("Running", "SetpointMovement");
   }
   else{
-    //doing down if we are not below MinHeight
-   /* if (currentPosition > kElevatorMinHeight) {
-     m_elevatorMotor.Set(goSpeed);
-     m_rightElevatorMotor.Set(-goSpeed);
-    }
-    */
-    /*
-    if (currentPosition <= kTroughSetPoint){
-      sendElevatorTo = 0.0;
-    }
-    else if (currentPosition <= kLevelTwoSetPoint){
-      sendElevatorTo = kTroughSetPoint;
-    }
-    else if (currentPosition <= kLevelThreeSetPoint){
-      sendElevatorTo = kLevelTwoSetPoint;
-    }
-    else if (currentPosition <= kLevelFourSetPoint) {
-      sendElevatorTo = kLevelThreeSetPoint;
-    }*/
+    double currentPosition = m_elevatorEncoder.GetPosition();
+    frc::SmartDashboard::PutNumber("Elevator Encoder Reading", currentPosition); 
+    // IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT
+    m_elevatorMotor.Set(goSpeed);
+    // IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT
+    isSetPointMoving = false;
   }
 }
 
@@ -94,7 +61,7 @@ void Elevator::SetpointMovement(){
     m_elevatorMotor.Set(0.0);   
     }
   else{
-    double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-0.7, 0.7);
+    double setPointAdjustment = std::clamp(m_setPointPIDController.Calculate(currentPosition, sendElevatorTo),-0.9, 0.9);
     m_elevatorMotor.Set(setPointAdjustment);
     frc::SmartDashboard::PutNumber("ElevatorSetPoint", setPointAdjustment);
     frc::SmartDashboard::PutNumber("SendElevatorTo", sendElevatorTo);
@@ -117,11 +84,13 @@ void Elevator::ResetEncoder(){
 
 void Elevator::Periodic() {
   // Implementation of subsystem periodic method goes here.
+  frc::SmartDashboard::PutNumber("Elevator Encoder Reading", m_elevatorEncoder.GetPosition());
 }
 
 void Elevator::SetPoint(double point){
+  isSetPointMoving = true;
   if(point == 0){
-    sendElevatorTo = kTroughSetPoint;
+    sendElevatorTo = kTroughSetPoint;//A
   }
     if(point == 1){
     sendElevatorTo = kLevelTwoSetPoint;
@@ -135,7 +104,28 @@ void Elevator::SetPoint(double point){
   frc::SmartDashboard::PutNumber("SendElevatorTo", sendElevatorTo);
 }
 
+frc2::CommandPtr Elevator::SetPointCmd(double point){
+  return RunOnce([this, point] {
+      isSetPointMoving = true;
+      if(point == 0){
+        sendElevatorTo = kTroughSetPoint;//A
+      }
+      if(point == 1){
+        sendElevatorTo = kLevelTwoSetPoint;
+      }
+      if(point == 2){
+        sendElevatorTo = kLevelThreeSetPoint;
+      }
+      if(point == 3){
+        sendElevatorTo = kLevelFourSetPoint;
+      }
+      frc::SmartDashboard::PutNumber("SendElevatorTo", sendElevatorTo);
+  });
+}
+
 
 void Elevator::SimulationPeriodic() {
   // Implementation of subsystem simulation periodic method goes here.
 }
+
+void Elevator::TurnOffSetPoint(){isSetPointMoving = false;}
