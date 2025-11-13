@@ -10,6 +10,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/trajectory/Trajectory.h>
 #include <frc/trajectory/TrajectoryGenerator.h>
+#include <frc/Timer.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/SwerveControllerCommand.h>
@@ -48,7 +49,10 @@ RobotContainer::RobotContainer() {
     //NamedCommands::registerCommand("autoScore", std::move(m_drive.PhotonDrive2()));
     //NamedCommands::registerCommand("autoScore", std::move(PhotonDrive2Command(&m_drive)));
 
-    //initial values set in constants.h 
+    // Initialize NetworkTables for custom vision application
+    m_visionTable = nt::NetworkTableInstance::GetDefault().GetTable(VisionConstants::kVisionTableName);
+
+    //initial values set in constants.h
     elevatorOverrideHeight = kElevatorForceDriveToCoDriverHeight;
     fieldRelative = FIELD_RELATIVE;
   // Configure the button bindings
@@ -197,6 +201,46 @@ bool RobotContainer::isValueInArray(int value, int array[], int size) {
     return false;
 }
 
+RobotContainer::VisionTargetData RobotContainer::getNetworkTablesVisionData() {
+    VisionTargetData data;
+
+    // Read all values from NetworkTables
+    data.hasTarget = m_visionTable->GetBoolean(VisionConstants::kHasTargetKey, false);
+    data.yaw = m_visionTable->GetNumber(VisionConstants::kTargetYawKey, 0.0);
+    data.pitch = m_visionTable->GetNumber(VisionConstants::kTargetPitchKey, 0.0);
+    data.area = m_visionTable->GetNumber(VisionConstants::kTargetAreaKey, 0.0);
+    data.targetID = m_visionTable->GetNumber(VisionConstants::kTargetIDKey, -1);
+    data.timestamp = m_visionTable->GetNumber(VisionConstants::kTimestampKey, 0.0);
+
+    // Check if data is fresh
+    double currentTime = frc::Timer::GetFPGATimestamp().value();
+    double dataAge = currentTime - data.timestamp;
+    data.isFresh = (dataAge < VisionConstants::kMaxVisionDataAge) && (dataAge >= 0);
+
+    // Log stale data warnings to SmartDashboard
+    if (data.hasTarget && !data.isFresh) {
+        frc::SmartDashboard::PutString("Vision Status", "STALE DATA");
+        frc::SmartDashboard::PutNumber("Vision Data Age", dataAge);
+    } else if (data.hasTarget && data.isFresh) {
+        frc::SmartDashboard::PutString("Vision Status", "FRESH");
+        frc::SmartDashboard::PutNumber("Vision Data Age", dataAge);
+    }
+
+    // Validate target ID is a reef tag
+    if (data.hasTarget && data.isFresh) {
+        bool isReefTag = std::any_of(
+            std::begin(ElevatorConstants::reefTags),
+            std::end(ElevatorConstants::reefTags),
+            [&data](int x) { return x == data.targetID; }
+        );
+        if (!isReefTag) {
+            data.hasTarget = false; // Ignore non-reef tags
+        }
+    }
+
+    return data;
+}
+
 void RobotContainer::ConfigureButtonBindings() {
     //Zero Heading
     frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kX).WhileTrue(new frc2::RunCommand([this] {
@@ -248,7 +292,7 @@ void RobotContainer::ConfigureButtonBindings() {
     }, {&m_drive}));
 
     //Photon Drive - driver still controls driving - but robot rotates front of bot facing toward visible reef april tag
-    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kB).WhileTrue(new frc2::RunCommand([this] { 
+    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kB).WhileTrue(new frc2::RunCommand([this] {
         photon::PhotonTrackedTarget target = hasValidAprilTagTarget();
         if (target.GetFiducialId() > 0) {
                         m_drive.PhotonDrive(
@@ -261,6 +305,22 @@ void RobotContainer::ConfigureButtonBindings() {
                         DriverControl();
                     }
       }, {&m_drive}));
+
+    // NetworkTables-based AprilTag Steering - uses custom vision application data from NetworkTables
+    // Driver controls translation, robot automatically rotates to face AprilTag target
+    frc2::JoystickButton(&m_driverController, frc::XboxController::Button::kA).WhileTrue(new frc2::RunCommand([this] {
+        VisionTargetData visionData = getNetworkTablesVisionData();
+        if (visionData.hasTarget && visionData.isFresh) {
+            // Driver controls direction of travel, but rotation faces reef april tag from NetworkTables
+            m_drive.PhotonDrive(
+                -units::meters_per_second_t{frc::ApplyDeadband(m_driverController.GetLeftY(), OIConstants::kDriveDeadband)},
+                -units::meters_per_second_t{frc::ApplyDeadband(m_driverController.GetLeftX(), OIConstants::kDriveDeadband)},
+                units::degree_t(visionData.yaw));
+        } else {
+            // Fall back to normal driver control if no valid/fresh target
+            DriverControl();
+        }
+    }, {&m_drive}));
 
 
     /*frc2::JoystickButton(&m_coDriverController, frc::XboxController::Button::kX).WhileTrue(new frc2::RunCommand([this] {

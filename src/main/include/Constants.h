@@ -205,6 +205,25 @@ namespace ClimberConstants {
   constexpr int kClimberMotorCanId = 31;
 }
 
+namespace VisionConstants {
+  // NetworkTables paths for custom vision application
+  constexpr const char* kVisionTableName = "VisionData";
+  constexpr const char* kTargetYawKey = "targetYaw";
+  constexpr const char* kTargetPitchKey = "targetPitch";
+  constexpr const char* kTargetAreaKey = "targetArea";
+  constexpr const char* kTargetIDKey = "targetID";
+  constexpr const char* kTimestampKey = "timestamp";
+  constexpr const char* kHasTargetKey = "hasTarget";
+
+  // Maximum age of vision data before considering it stale (in seconds)
+  constexpr double kMaxVisionDataAge = 0.5;
+
+  // PID constants for NetworkTables-based steering (can be tuned separately from PhotonVision)
+  constexpr double kNTSteeringP = 1.0;
+  constexpr double kNTSteeringI = 0.0;
+  constexpr double kNTSteeringD = 0.0;
+}
+
 //17 = right coral collector
 //23 = left coral collector
 

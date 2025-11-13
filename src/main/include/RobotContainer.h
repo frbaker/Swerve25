@@ -16,6 +16,8 @@
 #include <frc2/command/CommandPtr.h>
 #include <rev/SparkMax.h>
 #include <rev/SparkLowLevel.h>
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableInstance.h>
 #include "Constants.h"
 #include <photon/PhotonCamera.h>
 #include "subsystems/DriveSubsystem.h"
@@ -59,12 +61,28 @@ class RobotContainer {
   frc::SendableChooser<frc2::Command*> m_chooser;
 
   photon::PhotonCamera camera{"boom"};
+
+  // NetworkTables for custom vision application
+  std::shared_ptr<nt::NetworkTable> m_visionTable;
+
+  // Vision data structure with freshness checking
+  struct VisionTargetData {
+    double yaw;
+    double pitch;
+    double area;
+    int targetID;
+    double timestamp;
+    bool hasTarget;
+    bool isFresh;
+  };
+
   bool isValueInArray(int value, int array[], int size);
   void DriverControl();
   void ElevatorControl();
   void ClimberControl();
   void coDriverControl();
   photon::PhotonTrackedTarget hasValidAprilTagTarget();
+  VisionTargetData getNetworkTablesVisionData();
   // The chooser for the autonomous routines
   
 
